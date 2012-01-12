@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: translclass.mli 7372 2006-04-05 02:28:13Z garrigue $ *)
+(* $Id: translclass.mli 8113 2007-03-23 09:01:11Z maranget $ *)
 
 open Typedtree
 open Lambda

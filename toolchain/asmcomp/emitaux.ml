@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: emitaux.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: emitaux.ml 10507 2010-06-04 19:16:58Z maranget $ *)
 
 (* Common functions for emitting assembly code *)
 

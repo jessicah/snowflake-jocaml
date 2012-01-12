@@ -11,7 +11,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.msvc64 10622 2010-07-07 12:04:32Z frisch $
+# $Id: Makefile.msvc64 10634 2010-07-26 09:02:43Z maranget $
 
 # Configuration for Windows, Visual C++ compiler
 

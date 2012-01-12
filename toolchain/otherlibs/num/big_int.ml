@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: big_int.ml 10649 2010-08-18 13:22:48Z doligez $ *)
+(* $Id: big_int.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 open Int_misc
 open Nat
@@ -327,6 +327,8 @@ let int_of_big_int bi =
     if eq_big_int bi monster_big_int then monster_int
     else failwith "int_of_big_int";;
 
+<<<<<<< .courant
+=======
 let big_int_of_nativeint i =
   if i = 0n then
     zero_big_int
@@ -397,6 +399,7 @@ let int64_of_big_int bi =
       else failwith "int64_of_big_int"
   end
 
+>>>>>>> .fusion-droit.r10497
 (* Coercion with nat type *)
 let nat_of_big_int bi =
  if bi.sign = -1
@@ -623,14 +626,14 @@ let round_futur_last_digit s off_set length =
   if Char.code(String.get s l) >= Char.code '5'
     then
      let rec round_rec l =
-       if l < off_set then true else begin
-         let current_char = String.get s l in
-         if current_char = '9' then
-           (String.set s l '0'; round_rec (pred l))
-         else
-           (String.set s l (Char.chr (succ (Char.code current_char)));
-            false)
-       end
+      let current_char = String.get s l in
+       if current_char = '9'
+        then
+         (String.set s l '0';
+          if l = off_set then true else round_rec (pred l))
+        else
+         (String.set s l (Char.chr (succ (Char.code current_char)));
+          false)
      in round_rec (pred l)
    else false
 

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: errors.ml 8705 2007-12-04 13:38:58Z doligez $ *)
+(* $Id: errors.ml 9081 2008-10-14 07:37:28Z maranget $ *)
 
 (* WARNING: if you change something in this file, you must look at
    opterrors.ml and ocamldoc/odoc_analyse.ml

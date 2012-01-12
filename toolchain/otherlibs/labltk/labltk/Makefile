@@ -1,6 +1,6 @@
 include ../support/Makefile.common
 
-COMPFLAGS= -I ../support -I $(OTHERS)/win32unix -I $(OTHERS)/unix
+COMPFLAGS= -I ../support
 
 all: labltkobjs
 
@@ -15,12 +15,12 @@ labltkobjs: $(LABLTKOBJS)
 
 labltkobjsx: $(LABLTKOBJSX)
 
-install:
+install: $(LABLTKOBJS)
 	if test -d $(INSTALLDIR); then : ; else mkdir $(INSTALLDIR); fi
 	cp $(LABLTKOBJS:.cmo=.cmi) $(WIDGETOBJS:.cmo=.mli) $(INSTALLDIR)
 	chmod 644 $(INSTALLDIR)/*.cmi
 
-installopt:
+installopt: $(LABLTKOBJSX)
 	@if test -d $(INSTALLDIR); then : ; else mkdir $(INSTALLDIR); fi
 	cp $(LABLTKOBJSX) $(INSTALLDIR)
 	chmod 644 $(INSTALLDIR)/*.cmx
@@ -38,6 +38,6 @@ clean:
 	$(CAMLCOMP) $(COMPFLAGS) $<
 
 .ml.cmx:
-	$(CAMLOPT) -c $(COMPFLAGS) $<
+	$(CAMLOPT) -nojoin -c $(COMPFLAGS) $<
 
 include .depend

@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: instrtrace.h 7064 2005-09-22 14:21:50Z xleroy $ */
+/* $Id: instrtrace.h 7192 2005-10-27 09:14:16Z maranget $ */
 
 /* Trace the instructions executed */
 

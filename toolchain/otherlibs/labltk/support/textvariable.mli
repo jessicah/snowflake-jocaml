@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: textvariable.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: textvariable.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (* Support for Tk -textvariable option *)
 open Widget

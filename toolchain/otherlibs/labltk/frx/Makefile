@@ -1,6 +1,6 @@
 include ../support/Makefile.common
 
-COMPFLAGS=-I ../camltk -I ../support
+COMPFLAGS=-I ../camltk -I ../support -I $(OTHERS)/unix 
 
 OBJS= frx_misc.cmo frx_widget.cmo frx_font.cmo frx_entry.cmo frx_text.cmo \
       frx_listbox.cmo frx_req.cmo frx_fillbox.cmo frx_focus.cmo \
@@ -19,14 +19,14 @@ frxlib.cma: $(OBJS)
 frxlib.cmxa: $(OBJSX)
 	$(CAMLOPTLIBR) -o frxlib.cmxa $(OBJSX)
 
-install:
+install: frxlib.cma
 	cp *.cmi *.mli frxlib.cma $(INSTALLDIR)
 
-installopt:
-	cp frxlib.cmxa frxlib.$(A) $(INSTALLDIR)
+installopt: frxlib.cmxa
+	cp frxlib.cmxa frxlib.a $(INSTALLDIR)
 
 clean:
-	rm -f *.cm* *.$(O) *.$(A)
+	rm -f *.cm* *.o *.a
 
 $(OBJS) $(OBJS:.cmo=.cmi): ../lib/$(LIBNAME).cma
 
@@ -42,7 +42,7 @@ $(OBJSX): ../lib/$(LIBNAME).cmxa
 	$(CAMLCOMP) $(COMPFLAGS) $<
 
 .ml.cmx:
-	$(CAMLOPT) -c $(COMPFLAGS) $<
+	$(CAMLOPT) -nojoin -c $(COMPFLAGS) $<
 
 
 depend:

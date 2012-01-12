@@ -5,12 +5,12 @@ all: $(LIBNAME).cma $(LIBNAME)top$(EXE) $(LIBNAME)
 opt: $(LIBNAME).cmxa
 
 clean:
-	rm -f $(LIBNAME)top$(EXE) $(LIBNAME) *.cm* *.$(A)
+	rm -f $(LIBNAME)top$(EXE) $(LIBNAME) *.cm* *.a
 
 superclean:
 	- if test -f tk.cmo; then \
 	  echo We have changes... Now lib directory has no .cmo files; \
-	  rm -f *.cm* *.$(O); \
+	  rm -f *.cm* *.o; \
 	fi
 
 include ../labltk/modules
@@ -32,23 +32,33 @@ $(LIBNAME).cma: $(SUPPORT) ../Widgets.src
 	$(MAKE) superclean
 	cd ../labltk; $(MAKE)
 	cd ../camltk; $(MAKE)
-	$(MKLIB) -ocamlc '$(CAMLCB)' -o $(LIBNAME) \
+	$(MKLIB) -ocamlc '$(CAMLC)' -o $(LIBNAME) -oc $(LIBNAME) \
+<<<<<<< .courant
+          -I ../labltk -I ../camltk $(TKOBJS) \
+          $(TK_LINK)
+=======
 	  -I ../labltk -I ../camltk $(TKOBJS) \
 	  -ccopt "\"$(TK_LINK)\""
+>>>>>>> .fusion-droit.r10497
 
 $(LIBNAME).cmxa: $(SUPPORT:.cmo=.cmx) ../Widgets.src
 	$(MAKE) superclean
 	cd ../labltk; $(MAKE) opt
 	cd ../camltk; $(MAKE) opt
-	$(MKLIB) -ocamlopt '$(CAMLOPTB)' -o $(LIBNAME) -oc $(LIBNAME) \
+	$(MKLIB) -ocamlopt '$(CAMLOPT)' -o $(LIBNAME) -oc $(LIBNAME) \
+<<<<<<< .courant
+          -I ../labltk -I ../camltk $(TKOBJS:.cmo=.cmx) \
+          $(TK_LINK)
+=======
 	  -I ../labltk -I ../camltk $(TKOBJS:.cmo=.cmx) \
 	  -ccopt "\"$(TK_LINK)\""
+>>>>>>> .fusion-droit.r10497
 
-$(LIBNAME)top$(EXE) : $(TOPDEPS) $(LIBNAME).cma ../support/lib$(LIBNAME).$(A)
+$(LIBNAME)top$(EXE) : $(TOPDEPS) $(LIBNAME).cma ../support/lib$(LIBNAME).a
 	$(CAMLC) -verbose -linkall -o $(LIBNAME)top$(EXE) -I ../support \
 	       -I $(TOPDIR)/toplevel toplevellib.cma \
-	       -I $(OTHERS)/unix -I $(OTHERS)/win32unix unix.cma \
 	       -I ../labltk -I ../camltk $(LIBNAME).cma \
+	       -I $(OTHERS)/unix unix.cma \
 	       -I $(OTHERS)/str str.cma \
 	       topstart.cmo
 
@@ -77,7 +87,7 @@ install:
 
 installopt:
 	@if test -d $(INSTALLDIR); then : ; else mkdir $(INSTALLDIR); fi
-	cp $(LIBNAME).cmxa $(LIBNAME).$(A) $(INSTALLDIR)
-	cd $(INSTALLDIR); $(RANLIB) $(LIBNAME).$(A)
+	cp $(LIBNAME).cmxa $(LIBNAME).a $(INSTALLDIR)
+	cd $(INSTALLDIR); $(RANLIB) $(LIBNAME).a
 	chmod 644 $(INSTALLDIR)/$(LIBNAME).cmxa
-	chmod 644 $(INSTALLDIR)/$(LIBNAME).$(A)
+	chmod 644 $(INSTALLDIR)/$(LIBNAME).a

@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: balloon.mli 4745 2002-04-26 12:16:26Z furuse $ *)
+(* $Id: balloon.mli 6336 2004-05-27 09:18:38Z maranget $ *)
 
 (* easy balloon help facility *)
 open Widget

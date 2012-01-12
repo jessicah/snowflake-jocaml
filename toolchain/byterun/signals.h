@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: signals.h 7904 2007-02-23 09:29:45Z xleroy $ */
+/* $Id: signals.h 8113 2007-03-23 09:01:11Z maranget $ */
 
 #ifndef CAML_SIGNALS_H
 #define CAML_SIGNALS_H

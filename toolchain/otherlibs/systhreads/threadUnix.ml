@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: threadUnix.ml 4144 2001-12-07 13:41:02Z xleroy $ *)
+(* $Id: threadUnix.ml 7205 2005-10-27 16:29:22Z maranget $ *)
 
 (* Module [ThreadUnix]: thread-compatible system calls *)
 

@@ -11,13 +11,13 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile 10442 2010-05-20 09:40:41Z xleroy $
+# $Id: Makefile 10509 2010-06-04 19:17:18Z maranget $
 
 # Makefile for the Unix interface library
 
 LIBNAME=unix
 
-EXTRACAMLFLAGS=-nolabels
+EXTRACAMLFLAGS=-nolabels -nojoin
 
 COBJS=accept.o access.o addrofstr.o alarm.o bind.o chdir.o chmod.o \
   chown.o chroot.o close.o closedir.o connect.o cst2constr.o cstringv.o \

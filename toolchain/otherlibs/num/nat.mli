@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: nat.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: nat.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (* Module [Nat]: operations on natural numbers *)
 
@@ -27,8 +27,6 @@ external blit_nat: nat -> int -> nat -> int -> int -> unit = "blit_nat"
 val copy_nat: nat -> int -> int -> nat
 external set_digit_nat: nat -> int -> int -> unit = "set_digit_nat"
 external nth_digit_nat: nat -> int -> int = "nth_digit_nat"
-external set_digit_nat_native: nat -> int -> nativeint -> unit = "set_digit_nat_native"
-external nth_digit_nat_native: nat -> int -> nativeint = "nth_digit_nat_native"
 val length_nat : nat -> int
 external num_digits_nat: nat -> int -> int -> int = "num_digits_nat"
 external num_leading_zero_bits_in_digit: nat -> int -> int = "num_leading_zero_bits_in_digit"

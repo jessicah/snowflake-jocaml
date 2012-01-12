@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: clock.ml 4745 2002-04-26 12:16:26Z furuse $ *)
+(* $Id: clock.ml 6336 2004-05-27 09:18:38Z maranget $ *)
 
 (* Clock/V, a simple clock.
    Reverts every time you push the right button.

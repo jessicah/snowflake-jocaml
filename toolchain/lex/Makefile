@@ -10,16 +10,18 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile 9467 2009-12-09 09:52:47Z weis $
+# $Id: Makefile 10502 2010-06-04 19:15:07Z maranget $
 
 # The lexer generator
-CAMLC=../boot/ocamlrun ../boot/ocamlc -strict-sequence -nostdlib -I ../boot
-CAMLOPT=../boot/ocamlrun ../ocamlopt -nostdlib -I ../stdlib
+
+NOJOIN=-nojoin
+CAMLC=../boot/ocamlrun ../boot/ocamlc -strict-sequence -nostdlib -I ../boot $(NOJOIN)
+CAMLOPT=../boot/ocamlrun ../ocamlopt -nostdlib -I ../stdlib $(NOJOIN)
 COMPFLAGS=-warn-error A
 CAMLYACC=../boot/ocamlyacc
 YACCFLAGS=-v
 CAMLLEX=../boot/ocamlrun ../boot/ocamllex
-CAMLDEP=../boot/ocamlrun ../tools/ocamldep
+CAMLDEP=../boot/ocamlrun ../tools/ocamldep  $(NOJOIN)
 
 
 OBJS=cset.cmo syntax.cmo parser.cmo lexer.cmo table.cmo lexgen.cmo compact.cmo common.cmo output.cmo outputbis.cmo main.cmo

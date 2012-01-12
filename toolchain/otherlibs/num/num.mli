@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: num.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: num.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (** Operation on arbitrary-precision numbers.
 

@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: editor.ml 7307 2006-01-04 16:55:50Z doligez $ *)
+(* $Id: editor.ml 6336 2004-05-27 09:18:38Z maranget $ *)
 
 open StdLabels
 open Tk
@@ -287,8 +287,8 @@ class editor ~top ~menus = object (self)
   val compiler_menu = new Jg_menu.c "Compiler" ~parent:menus
   val module_menu = new Jg_menu.c "Modules" ~parent:menus
   val window_menu = new Jg_menu.c "Windows" ~parent:menus
-  initializer
-    Menu.add_checkbutton menus ~state:`Disabled
+  val label =
+    Checkbutton.create menus ~state:`Disabled
       ~onvalue:"modified" ~offvalue:"unchanged"
   val mutable current_dir = Unix.getcwd ()
   val mutable error_messages = []
@@ -314,18 +314,14 @@ class editor ~top ~menus = object (self)
           ~command:(fun () -> self#set_edit txt)
       end
 
-  method set_file_name txt =
-    Menu.configure_checkbutton menus `Last
-      ~label:(Filename.basename txt.name)
-      ~variable:txt.modified
-
   method set_edit txt  =
     if windows <> [] then
       Pack.forget [(List.hd windows).frame];
     windows <- txt :: exclude txt windows;
     self#reset_window_menu;
     current_tw <- txt.tw;
-    self#set_file_name txt;
+    Checkbutton.configure label ~text:(Filename.basename txt.name)
+      ~variable:txt.modified;
     Textvariable.set vwindow txt.number;
     Text.yview txt.tw ~scroll:(`Page 0);
     pack [txt.frame] ~fill:`Both ~expand:true ~side:`Bottom
@@ -385,7 +381,7 @@ class editor ~top ~menus = object (self)
     pack [sb] ~fill:`Y ~side:`Right;
     pack [tw] ~fill:`Both ~expand:true ~side:`Left;
     self#set_edit txt;
-    Textvariable.set txt.modified "unchanged";
+    Checkbutton.deselect label;
     Lexical.init_tags txt.tw
 
   method clear_errors () =
@@ -433,8 +429,9 @@ class editor ~top ~menus = object (self)
       let text = Text.get txt.tw ~start:tstart ~stop:(tposend 1) in
       output_string file text;
       close_out file;
-      txt.name <- name;
-      self#set_file_name txt
+      Checkbutton.configure label ~text:(Filename.basename name);
+      Checkbutton.deselect label;
+      txt.name <- name
     with
       Sys_error _ ->
         Jg_message.info ~master:top ~title:"Error"
@@ -456,7 +453,7 @@ class editor ~top ~menus = object (self)
             | `No -> ()
             | `Cancel -> raise Exit
             end;
-          Textvariable.set txt.modified "unchanged";
+          Checkbutton.deselect label;
           (Text.index current_tw ~index:(`Mark"insert", []), [])
         with Not_found -> self#new_window name; tstart
       in
@@ -632,6 +629,13 @@ class editor ~top ~menus = object (self)
       ~command:Viewer.search_symbol;
     module_menu#add_command "Close all"
       ~command:Viewer.close_all_views;
+
+    (* pack everything *)
+    pack (List.map ~f:(fun m -> coe m#button)
+            [file_menu; edit_menu; compiler_menu; module_menu; window_menu]
+          @ [coe label])
+      ~side:`Left ~ipadx:5 ~anchor:`W;
+    pack [menus] ~before:(List.hd windows).frame ~side:`Top ~fill:`X
 end
 
 (* The main function starts here ! *)
@@ -654,7 +658,7 @@ let editor ?file ?(pos=0) ?(reuse=false) () =
       false
   then () else
     let top = Jg_toplevel.titled "OCamlBrowser Editor" in
-    let menus = Jg_menu.menubar top in
+    let menus = Frame.create top ~name:"menubar" in
     let ed = new editor ~top ~menus in
     already_open := !already_open @ [ed];
     if file <> None then ed#reopen ~file ~pos

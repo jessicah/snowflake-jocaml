@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: predef.mli 7702 2006-10-24 20:54:58Z weis $ *)
+(* $Id: predef.mli 8126 2007-03-26 15:38:32Z maranget $ *)
 
 (* Predefined type constructors (with special typing rules in typecore) *)
 
@@ -30,6 +30,9 @@ val type_nativeint: type_expr
 val type_int32: type_expr
 val type_int64: type_expr
 val type_lazy_t: type_expr -> type_expr
+(*> JOCAML *)
+val type_process : kont_locs -> type_expr
+(*< JOCAML *)
 
 val path_int: Path.t
 val path_char: Path.t

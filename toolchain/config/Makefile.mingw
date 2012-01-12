@@ -11,19 +11,19 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.mingw 10461 2010-05-25 10:00:39Z frisch $
+# $Id: Makefile.mingw 10503 2010-06-04 19:15:54Z maranget $
 
 # Configuration for Windows, Mingw compiler
 
 ######### General configuration
 
-PREFIX=C:/ocamlmgw
+PREFIX=C:/jocamlmgw
 
 ### Where to install the binaries
 BINDIR=$(PREFIX)/bin
 
 ### Where to install the standard library
-LIBDIR=$(PREFIX)/lib
+LIBDIR=$(PREFIX)/lib/
 
 ### Where to install the stub DLLs
 STUBLIBDIR=$(LIBDIR)/stublibs

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: optmain.ml 10444 2010-05-20 14:06:29Z doligez $ *)
+(* $Id: optmain.ml 10504 2010-06-04 19:16:33Z maranget $ *)
 
 open Config
 open Clflags
@@ -56,10 +56,16 @@ let process_file ppf name =
     raise(Arg.Bad("don't know what to do with " ^ name))
 
 let print_version_and_library () =
-  print_string "The Objective Caml native-code compiler, version ";
+  print_string "The JoCaml native-code compiler, version ";
   print_string Config.version; print_newline();
   print_string "Standard library directory: ";
   print_string Config.standard_library; print_newline();
+  begin match Config.ocaml_library with
+  | None -> ()
+  | Some d ->
+      print_string "Companion OCaml library directory: ";
+       print_string d; print_newline()
+  end ;
   exit 0
 
 let print_version_string () =
@@ -81,7 +87,7 @@ let default_output = function
   | Some s -> s
   | None -> Config.default_executable_name
 
-let usage = "Usage: ocamlopt <options> <files>\nOptions are:"
+let usage = "Usage: jocamlopt <options> <files>\nOptions are:"
 
 (* Error messages to standard error formatter *)
 let anonymous = process_file Format.err_formatter;;
@@ -119,6 +125,7 @@ module Options = Main_args.Make_optcomp_options (struct
   let _noassert = set noassert
   let _noautolink = set no_auto_link
   let _nodynlink = clear dlcode
+  let _nojoin = set nojoin
   let _nolabels = set classic
   let _nostdlib = set no_std_include
   let _o s = output_name := Some s

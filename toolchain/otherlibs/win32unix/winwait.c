@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: winwait.c 8768 2008-01-11 16:13:18Z doligez $ */
+/* $Id: winwait.c 8113 2007-03-23 09:01:11Z maranget $ */
 
 #include <windows.h>
 #include <mlvalues.h>
@@ -19,7 +19,6 @@
 #include <memory.h>
 #include "unixsupport.h"
 #include <sys/types.h>
-#include <signals.h>
 
 static value alloc_process_status(HANDLE pid, int status)
 {
@@ -63,8 +62,6 @@ CAMLprim value win_waitpid(value vflags, value vpid_req)
   }
   if (status == STILL_ACTIVE)
     return alloc_process_status((HANDLE) 0, 0);
-  else {
-    CloseHandle(pid_req);
+  else
     return alloc_process_status(pid_req, status);
-  }
 }

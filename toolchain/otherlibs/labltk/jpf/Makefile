@@ -1,6 +1,6 @@
 include ../support/Makefile.common
 
-COMPFLAGS=-I ../labltk -I ../support -I $(OTHERS)/win32unix -I $(OTHERS)/unix -I $(OTHERS)/str
+COMPFLAGS=-I ../labltk -I ../support -I $(OTHERS)/unix -I $(OTHERS)/str
 
 OBJS= fileselect.cmo balloon.cmo shell.cmo jpf_font.cmo
 
@@ -20,14 +20,14 @@ jpflib.cma: $(OBJS)
 jpflib.cmxa: $(OBJSX)
 	$(CAMLOPTLIBR) -o jpflib.cmxa $(OBJSX)
 
-install:
+install: jpflib.cma
 	cp $(OBJS:.cmo=.cmi) $(OBJS:.cmo=.mli) jpflib.cma $(INSTALLDIR)
 
-installopt:
-	cp jpflib.cmxa jpflib.$(A) $(OBJS:.cmo=.cmx) $(INSTALLDIR)
+installopt: jpflib.cmxa
+	cp jpflib.cmxa jpflib.a $(OBJS:.cmo=.cmx) $(INSTALLDIR)
 
 clean:
-	rm -f *.cm* *.$(O) *.$(A) *~ *test
+	rm -f *.cm* *.o *.a *~ *test
 
 $(OBJS) $(OBJS:.cmo=.cmi): ../lib/$(LIBNAME).cma
 
@@ -36,11 +36,11 @@ $(OBJSX): ../lib/$(LIBNAME).cmxa
 ### Tests
 
 balloontest: balloontest.cmo
-	$(CAMLC) -o balloontest -I ../support -I ../lib \
+	$(CAMLC) -nojoin -o balloontest -I ../support -I ../lib \
 	        -custom $(LIBNAME).cma jpflib.cma balloontest.cmo
 
 balloontest.opt: balloontest.cmx
-	$(CAMLOPT) -o balloontest.opt -I ../support -I ../lib \
+	$(CAMLOPT) -nojoin -o balloontest.opt -I ../support -I ../lib \
 	        $(LIBNAME).cmxa jpflib.cmxa balloontest.cmx
 
 balloontest.cmo : balloon.cmo jpflib.cma
@@ -57,7 +57,7 @@ balloontest.cmx : balloon.cmx jpflib.cmxa
 	$(CAMLCOMP) $(COMPFLAGS) $<
 
 .ml.cmx:
-	$(CAMLOPT) -c $(COMPFLAGS) $<
+	$(CAMLOPT) -nojoin -c $(COMPFLAGS) $<
 
 depend:
 	mv Makefile Makefile.bak

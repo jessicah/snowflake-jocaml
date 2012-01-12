@@ -10,7 +10,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: parser.mly 11016 2011-04-29 04:56:21Z furuse $ */
+/* $Id: parser.mly 11113 2011-07-07 14:32:00Z maranget $ */
 
 /* The parser definition */
 
@@ -324,6 +324,11 @@ let pat_of_label lbl =
 %token WHILE
 %token WITH
 
+%token DEF
+%token REPLY
+%token SPAWN
+
+
 /* Precedences and associativities.
 
 Tokens and rules have precedences.  A reduce/reduce conflict is resolved
@@ -351,11 +356,13 @@ The precedences must be listed from low to high.
 %nonassoc below_SEMI
 %nonassoc SEMI                          /* below EQUAL ({lbl=...; lbl=...}) */
 %nonassoc LET                           /* above SEMI ( ...; let ... in ...) */
+%nonassoc DEF
 %nonassoc below_WITH
 %nonassoc FUNCTION WITH                 /* below BAR  (match ... with ...) */
 %nonassoc AND             /* above WITH (module rec A: SIG with ... and ...) */
 %nonassoc THEN                          /* below ELSE (if ... then ...) */
 %nonassoc ELSE                          /* (if ... then ... else ...) */
+%nonassoc SPAWN
 %nonassoc LESSMINUS                     /* below COLONEQUAL (lbl <- x := e) */
 %right    COLONEQUAL                    /* expr (e := e := e) */
 %nonassoc AS
@@ -496,6 +503,12 @@ structure_item:
       { mkstr(Pstr_class_type (List.rev $3)) }
   | INCLUDE module_expr
       { mkstr(Pstr_include $2) }
+/*> JOCAML */
+  | DEF joinautomaton_list_AND
+      { mkstr(Pstr_def $2) }
+  | DEF EXCEPTION constr_longident
+      { mkstr(Pstr_exn_global $3) }
+/*< JOCAML */
 ;
 module_binding:
     EQUAL module_expr
@@ -917,12 +930,10 @@ expr:
       { mkinfix $1 "<" $3 }
   | expr GREATER expr
       { mkinfix $1 ">" $3 }
-  | expr OR expr
-      { mkinfix $1 "or" $3 }
   | expr BARBAR expr
       { mkinfix $1 "||" $3 }
   | expr AMPERSAND expr
-      { mkinfix $1 "&" $3 }
+      { mkexp(Pexp_par ($1,$3)) }
   | expr AMPERAMPER expr
       { mkinfix $1 "&&" $3 }
   | expr COLONEQUAL expr
@@ -951,6 +962,15 @@ expr:
       { mkexp (Pexp_object($2)) }
   | OBJECT class_structure error
       { unclosed "object" 1 "end" 3 }
+/*> JOCAML */
+  | REPLY TO joinident
+      { mkexp
+          (Pexp_reply
+             (ghexp (Pexp_construct (Lident "()", None, false)), $3)) }
+  | REPLY seq_expr TO joinident               { mkexp(Pexp_reply($2,$4)) }
+  | SPAWN expr                                { mkexp(Pexp_spawn $2) }
+  | DEF joinautomaton_list_AND IN seq_expr    { mkexp(Pexp_def($2,$4)) }
+/*< JOCAML */
 ;
 simple_expr:
     val_longident
@@ -1647,6 +1667,41 @@ subtractive:
   | MINUS                                       { "-" }
   | MINUSDOT                                    { "-." }
 ;
+
+/* > JOCAML */
+
+joinident:
+  | LIDENT                                      { { pjident_desc=$1 ; pjident_loc=symbol_rloc () } }
+;
+
+joinpattern:
+  | joinident LPAREN pattern RPAREN
+      { { pjpat_desc=$1,$3 ; pjpat_loc=symbol_rloc () } }
+  | joinident LPAREN RPAREN
+      { { pjpat_desc=$1,mkpat(Ppat_construct(Lident "()", None, false)) ; pjpat_loc=symbol_rloc () } }
+;
+joinpattern_list_AMP:
+  | joinpattern_list_AMP AMPERSAND joinpattern { $3 :: $1 }
+  | joinpattern                                 { [$1] }
+;
+
+joinclause:
+  | joinpattern_list_AMP EQUAL seq_expr         { { pjclause_desc=$1,$3 ; pjclause_loc=symbol_rloc () } }
+;
+joinclause_list_OR:
+  | joinclause_list_OR OR joinclause            { $3 :: $1 }
+  | joinclause                                  { [$1] }
+;
+
+joinautomaton:
+  | joinclause_list_OR                          { { pjauto_desc=$1 ; pjauto_loc=symbol_rloc () } }
+;
+joinautomaton_list_AND:
+  | joinautomaton_list_AND AND joinautomaton    { $3 :: $1 }
+  | joinautomaton                               { [$1] }
+;
+/* < JOCAML */
+
 additive:
   | PLUS                                        { "+" }
   | PLUSDOT                                     { "+." }

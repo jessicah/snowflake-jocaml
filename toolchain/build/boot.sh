@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: boot.sh 10956 2011-02-21 15:09:49Z xclerc $
+# $Id: boot.sh 11113 2011-07-07 14:32:00Z maranget $
 cd `dirname $0`/..
 set -ex
 TAG_LINE='true: -use_stdlib'

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typecore.mli 10417 2010-05-18 16:46:46Z frisch $ *)
+(* $Id: typecore.mli 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Type inference for the core language *)
 
@@ -32,6 +32,13 @@ val type_let:
           (Typedtree.pattern * Typedtree.expression) list * Env.t
 val type_expression:
         Env.t -> Parsetree.expression -> Typedtree.expression
+(*> JOCAML *)
+val type_joindefinition:   
+    Env.t -> Parsetree.joinautomaton list ->
+      Annot.ident option ->
+      (Typedtree.joinautomaton list * Env.t)
+(*< JOCAML *)
+
 val type_class_arg_pattern:
         string -> Env.t -> Env.t -> label -> Parsetree.pattern ->
         Typedtree.pattern * (Ident.t * Ident.t * type_expr) list *
@@ -96,6 +103,18 @@ type error =
   | Not_a_variant_type of Longident.t
   | Incoherent_label_order
   | Less_general of string * (type_expr * type_expr) list
+(*> JOCAML *)
+  | Expr_as_proc
+  | Proc_as_expr
+  | Garrigue_illegal of string (* merci Jacques ! *)
+  | Vouillon_illegal of string (* merci Jerome ! *)
+  | Send_non_channel of type_expr
+  | Join_pattern_type_clash of (type_expr * type_expr) list
+  | Unbound_continuation of Longident.t
+  | DoubleReply of Ident.t * Location.t * Location.t
+  | ExtraReply of Ident.t
+  | MissingReply of Ident.t
+(*< JOCAML *)
 
 exception Error of Location.t * error
 

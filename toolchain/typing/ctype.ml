@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ctype.ml 10702 2010-10-02 08:56:39Z garrigue $ *)
+(* $Id: ctype.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Operations on core types *)
 
@@ -650,6 +650,19 @@ let rec update_level env level ty =
         iter_type_expr (update_level env level) ty
     end
   end
+(* 
+   Function [update_level] will never try to expand an abbreviation in
+   this case ([current_level] is greater than the binding time of any
+   type constructor path). So, it can be called with the empty
+   environnement.
+      This fuction was removed by Jacques.
+      I put it again for Jocaml. (Luc)
+*)
+let make_nongen ty =
+  try
+    update_level Env.empty !nongen_level ty
+  with Unify [_, ty'] ->
+    raise (Unify [ty, ty'])
 
 (* Generalize and lower levels of contravariant branches simultaneously *)
 
@@ -1957,6 +1970,37 @@ let rec filter_arrow env t l =
   | _ ->
       raise (Unify [])
 
+(*>JOCAML*)
+(*
+   Unify [t] and ['a channel]. Return ['a]
+*)
+
+let path_channel env =
+  let p,_ =
+    Env.lookup_type
+      (Longident.Ldot ( Longident.Lident "Join", "chan"))
+      env in
+  p
+
+let make_channel env t =
+  newty (Tconstr (path_channel env,[t],ref Mnil))
+
+let filter_channel env t =
+  let path_channel = path_channel env in
+  let t = expand_head env t in
+  match t.desc with
+    Tvar ->
+      let t1 = newvar () in
+      let t' = make_channel env t1 in
+      update_level env t.level t';
+      t.desc <- Tlink t';
+      t1
+  | Tconstr(p, [t1], _) when Path.same p path_channel ->
+      t1
+  | _ ->
+      raise (Unify [])
+(*<JOCAML*)
+
 (* Used by [filter_method]. *)
 let rec filter_method_field env name priv ty =
   let ty = repr ty in
@@ -2962,6 +3006,7 @@ let rec build_subtype env visited loops posi level t =
       else (t, Unchanged)
   | Tunivar | Tpackage _ ->
       (t, Unchanged)
+   | Tproc _ -> assert false
 
 let enlarge_type env ty =
   warn := false;

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: primitive.mli 8930 2008-07-24 05:35:22Z frisch $ *)
+(* $Id: primitive.mli 9081 2008-10-14 07:37:28Z maranget $ *)
 
 (* Description of primitive functions *)
 

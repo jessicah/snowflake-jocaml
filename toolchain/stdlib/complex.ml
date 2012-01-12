@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: complex.ml 7164 2005-10-25 18:34:07Z doligez $ *)
+(* $Id: complex.ml 7199 2005-10-27 11:38:58Z maranget $ *)
 
 (* Complex numbers *)
 
@@ -62,7 +62,7 @@ let arg x = atan2 x.im x.re
 
 let polar n a = { re = cos a *. n; im = sin a *. n }
 
-let sqrt x =
+let sqrt x = 
   if x.re = 0.0 && x.im = 0.0 then { re = 0.0; im = 0.0 }
   else begin
     let r = abs_float x.re and i = abs_float x.im in

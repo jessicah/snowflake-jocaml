@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: types.ml 9397 2009-10-26 10:53:16Z frisch $ *)
+(* $Id: types.ml 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Representation of types and declarations *)
 
@@ -37,7 +37,14 @@ and type_desc =
   | Tvariant of row_desc
   | Tunivar
   | Tpoly of type_expr * type_expr list
+(*>JOCAML*)
+  | Tproc of kont_locs
+(*<JOCAML*)
   | Tpackage of Path.t * string list * type_expr list
+
+(*>JOCAML*)
+and kont_locs = (Ident.t * Location.t) list
+(*<JOCAML*)
 
 and row_desc =
     { row_fields: (label * row_field) list;
@@ -101,6 +108,12 @@ and value_kind =
   | Val_anc of (string * Ident.t) list * string
                                         (* Ancestor *)
   | Val_unbound                         (* Unbound variable *)
+(*> JOCAML *)
+  | Val_channel of Ident.t * int
+     (* Channel: automaton, index *)
+  | Val_alone of Ident.t 
+     (* Channel: guard *)
+(*< JOCAML *)
 
 (* Constructor descriptions *)
 
@@ -133,6 +146,12 @@ type label_description =
 and record_representation =
     Record_regular                      (* All fields are boxed / tagged *)
   | Record_float                        (* All fields are floats *)
+
+(*> JOCAML *)
+type continuation_description =
+  {continuation_type : type_expr;
+  mutable continuation_kind : bool;}
+(*< JOCAML *)
 
 (* Type definitions *)
 

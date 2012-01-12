@@ -12,7 +12,8 @@
 #                                                                       #
 #########################################################################
 
-# $Id: partial-install.sh 10443 2010-05-20 09:44:25Z doligez $
+# $Id: partial-install.sh 10526 2010-06-04 20:01:14Z maranget $
+
 
 ######################################
 ######### Copied from build/install.sh
@@ -23,6 +24,8 @@ set -e
 cd `dirname $0`/..
 
 . config/config.sh
+
+[ -d $PWD/_build ] || mkdir $PWD/_build
 
 not_installed=$PWD/_build/not_installed
 

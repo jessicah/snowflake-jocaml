@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: bytepackager.ml 11083 2011-06-11 07:24:12Z xleroy $ *)
+(* $Id: bytepackager.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* "Package" a set of .cmo files into one .cmo file having the
    original compilation units as sub-modules. *)

@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: viewer.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: viewer.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 open StdLabels
 open Tk
@@ -316,19 +316,19 @@ let show_help () =
 (* Launch the classical viewer *)
 
 let f ?(dir=Unix.getcwd()) ?on () =
-  let (top, tl) = match on with
+  let tl = match on with
     None ->
       let tl = Jg_toplevel.titled "Module viewer" in
-      ignore (Jg_bind.escape_destroy tl); (tl, coe tl)
+      ignore (Jg_bind.escape_destroy tl); coe tl
   | Some top ->
       Wm.title_set top "OCamlBrowser";
       Wm.iconname_set top "OCamlBrowser";
       let tl = Frame.create top in
       bind tl ~events:[`Destroy] ~action:(fun _ -> exit 0);
       pack [tl] ~expand:true ~fill:`Both;
-      (top, coe tl)
+      coe tl
   in
-  let menus = Jg_menu.menubar top in
+  let menus = Frame.create tl ~name:"menubar" in
   let filemenu = new Jg_menu.c "File" ~parent:menus
   and modmenu = new Jg_menu.c "Modules" ~parent:menus in
   let fmbox, mbox, msb = Jg_box.create_with_scrollbar tl in
@@ -366,6 +366,8 @@ let f ?(dir=Unix.getcwd()) ?on () =
     ~command:(fun () -> reset_modules mbox; Env.reset_cache ());
   modmenu#add_command "Search symbol..." ~command:search_symbol;
 
+  pack [filemenu#button; modmenu#button] ~side:`Left ~ipadx:5 ~anchor:`W;
+  pack [menus] ~side:`Top ~fill:`X;      
   pack [close; search] ~fill:`X ~side:`Right ~expand:true;
   pack [coe buttons; coe ew] ~fill:`X ~side:`Bottom;
   pack [msb] ~side:`Right ~fill:`Y;
@@ -376,20 +378,19 @@ let f ?(dir=Unix.getcwd()) ?on () =
 (* Smalltalk-like version *)
 
 class st_viewer ?(dir=Unix.getcwd()) ?on () =
-  let (top, tl) = match on with
+  let tl = match on with
     None ->
       let tl = Jg_toplevel.titled "Module viewer" in
-      ignore (Jg_bind.escape_destroy tl); (tl, coe tl)
+      ignore (Jg_bind.escape_destroy tl); coe tl
   | Some top ->
       Wm.title_set top "OCamlBrowser";
       Wm.iconname_set top "OCamlBrowser";
       let tl = Frame.create top in
       bind tl ~events:[`Destroy] ~action:(fun _ -> exit 0);
-      pack [tl] ~side:`Bottom ~expand:true ~fill:`Both;
-      (top, coe tl)
+      pack [tl] ~expand:true ~fill:`Both;
+      coe tl
   in
-  let menus = Menu.create top ~name:"menubar" ~typ:`Menubar in
-  let () = Toplevel.configure top ~menu:menus in
+  let menus = Frame.create tl ~name:"menubar" in
   let filemenu = new Jg_menu.c "File" ~parent:menus
   and modmenu = new Jg_menu.c "Modules" ~parent:menus
   and viewmenu = new Jg_menu.c "View" ~parent:menus
@@ -489,7 +490,15 @@ object (self)
     (* Help menu *)
     helpmenu#add_command "Manual..." ~command:show_help;
 
+<<<<<<< .courant
+    pack [filemenu#button; viewmenu#button; modmenu#button]
+      ~side:`Left ~ipadx:5 ~anchor:`W;
+    pack [helpmenu#button] ~side:`Right ~anchor:`E ~ipadx:5;
+    pack [menus] ~fill:`X;      
+    pack [search_frame] ~fill:`X;      
+=======
     pack [search_frame] ~fill:`X;
+>>>>>>> .fusion-droit.r10497
     pack [boxes_frame] ~fill:`Both ~expand:true;
     pack [buttons] ~fill:`X ~side:`Bottom;
     pack [view] ~fill:`Both ~side:`Bottom ~expand:true;

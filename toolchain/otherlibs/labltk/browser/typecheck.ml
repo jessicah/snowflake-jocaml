@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: typecheck.ml 9319 2009-07-20 11:51:50Z doligez $ *)
+(* $Id: typecheck.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 open StdLabels
 open Tk
@@ -46,12 +46,8 @@ let preprocess ~pp ~ext text =
 exception Outdated_version
 
 let parse_pp ~parse ~wrap ~ext text =
-  Location.input_name := "";
   match !Clflags.preprocessor with
-    None ->
-      let buffer = Lexing.from_string text in
-      Location.init buffer "";
-      parse buffer
+    None -> parse (Lexing.from_string text)
   | Some pp ->
       let tmpfile = preprocess ~pp ~ext text in
       let ast_magic =
@@ -76,9 +72,7 @@ let parse_pp ~parse ~wrap ~ext text =
             failwith "Ocaml and preprocessor have incompatible versions"
         | _ ->
             seek_in ic 0;
-            let buffer = Lexing.from_channel ic in
-            Location.init buffer "";
-            parse buffer
+            parse (Lexing.from_channel ic)
       in
       close_in ic;
       Sys.remove tmpfile;
@@ -98,7 +92,7 @@ let f txt =
   txt.signature <- [];
   txt.psignature <- [];
   ignore (Stypes.get_info ());
-  Clflags.annotations := true;
+  Clflags.save_types := true;
 
   begin try
 
@@ -115,7 +109,7 @@ let f txt =
     List.iter psl ~f:
     begin function
       Ptop_def pstr ->
-        let str, sign, env' = Typemod.type_structure !env pstr Location.none in
+        let str, sign, env' = Typemod.type_structure !env pstr in
         txt.structure <- txt.structure @ str;
         txt.signature <- txt.signature @ sign;
         env := env'

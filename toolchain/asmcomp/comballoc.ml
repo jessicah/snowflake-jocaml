@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: comballoc.ml 10910 2010-12-22 13:52:24Z xleroy $ *)
+(* $Id: comballoc.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Combine heap allocations occurring in the same basic block *)
 

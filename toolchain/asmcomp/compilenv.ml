@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: compilenv.ml 10424 2010-05-19 11:29:38Z xleroy $ *)
+(* $Id: compilenv.ml 10507 2010-06-04 19:16:58Z maranget $ *)
 
 (* Compilation environments for compilation units *)
 

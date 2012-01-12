@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: libgraph.h 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: libgraph.h 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <stdio.h>
 #include <X11/Xlib.h>
@@ -55,7 +55,7 @@ extern int caml_gr_bits_per_pixel;
 #define DEFAULT_SCREEN_WIDTH 600
 #define DEFAULT_SCREEN_HEIGHT 450
 #define BORDER_WIDTH 2
-#define DEFAULT_WINDOW_NAME "Caml graphics"
+#define DEFAULT_WINDOW_NAME "JoCaml graphics"
 #define DEFAULT_SELECTED_EVENTS \
             (ExposureMask | KeyPressMask | StructureNotifyMask)
 #define DEFAULT_FONT "fixed"

@@ -42,10 +42,10 @@
 ;modules and constructors
    ("`?\\<[A-Z][A-Za-z0-9_']*\\>" . font-lock-function-name-face)
 ;definition
-   (,(regexp-opt '("and" "as" "constraint" "class"
+   (,(regexp-opt '("and" "as" "constraint" "class" "def"
                    "exception" "external" "fun" "function" "functor"
                    "in" "inherit" "initializer" "let"
-                   "method" "mutable" "module" "of" "private" "rec"
+                   "method" "mutable" "module" "of" "or" "private" "rec"
                    "type" "val" "virtual")
                  'words)
     . font-lock-type-face)
@@ -60,7 +60,8 @@
 ;control
    (,(concat "[|#&]\\|->\\|"
              (regexp-opt '("do" "done" "downto" "else" "for" "if" "ignore"
-                           "lazy" "match" "new" "or" "then" "to" "try"
+                           "lazy" "match" "new" "reply"
+			   "spawn" "then" "to" "try"
                            "when" "while" "with")
                          'words))
     . font-lock-constant-face)

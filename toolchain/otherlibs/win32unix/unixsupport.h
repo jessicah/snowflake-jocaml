@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: unixsupport.h 10467 2010-05-25 13:01:06Z xleroy $ */
+/* $Id: unixsupport.h 10509 2010-06-04 19:17:18Z maranget $ */
 
 #define WIN32_LEAN_AND_MEAN
 #include <wtypes.h>
@@ -38,7 +38,7 @@ struct filedescr {
 #define CRT_fd_val(v) (((struct filedescr *) Data_custom_val(v))->crt_fd)
 #define Flags_fd_val(v) (((struct filedescr *) Data_custom_val(v))->flags_fd)
 
-/* extern value win_alloc_handle_or_socket(HANDLE); */
+extern value win_alloc_handle_or_socket(HANDLE);
 extern value win_alloc_handle(HANDLE);
 extern value win_alloc_socket(SOCKET);
 extern int win_CRT_fd_of_filedescr(value handle);

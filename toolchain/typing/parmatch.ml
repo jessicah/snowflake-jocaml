@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: parmatch.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: parmatch.ml 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Detection of partial matches and unused match cases. *)
 
@@ -1687,6 +1687,51 @@ let check_unused tdefs casel =
 
     do_rec [] casel
 
+(*>JOCAML*)
+(***********************************************************************)
+(*      
+	Take a list of patterns as argument, test if each pattern
+	is useful in its corresponding position in the list, and 
+	return the result as a list of boolean.
+
+      useful pattern list -> bool list 
+
+*************************************************************************)
+
+
+let useful pats =
+  let rec do_rec pref = function
+    | [] -> []
+    | pat::rem ->
+        satisfiable pref [pat]::
+        do_rec ([pat]::pref) rem in
+  do_rec [] pats
+
+let rec remove_binders p = match p.pat_desc with
+| Tpat_any|Tpat_constant _|Tpat_variant (_, None, _) -> p
+| Tpat_var _ -> { p with  pat_desc = Tpat_any }
+| Tpat_alias (p, _) -> remove_binders p
+| Tpat_tuple ps ->
+    { p with pat_desc = Tpat_tuple (remove_binders_list ps) }
+| Tpat_construct (c, ps) ->
+    { p with pat_desc = Tpat_construct (c, remove_binders_list ps) }
+| Tpat_variant (lab, Some p, row) ->
+    { p with pat_desc = Tpat_variant (lab, Some (remove_binders p), row) }
+| Tpat_record lblps ->
+    { p with pat_desc =
+     Tpat_record (List.map (fun (lbl,p) -> lbl, remove_binders p) lblps) }
+| Tpat_array ps ->
+    { p with pat_desc = Tpat_array (remove_binders_list ps) }
+| Tpat_or (p1, p2, patho) ->
+    { p with pat_desc =
+      Tpat_or (remove_binders p1, remove_binders p2, patho) }
+| Tpat_lazy q ->
+    { p with pat_desc = Tpat_lazy (remove_binders q) }
+
+and remove_binders_list ps = List.map remove_binders ps
+
+(*<JOCAML*)
+
 (*********************************)
 (* Exported irrefutability tests *)
 (*********************************)
@@ -1715,3 +1760,4 @@ let rec inactive pat = match pat with
 (* A `fluid' pattern is both irrefutable and inactive *)
 
 let fluid pat = irrefutable pat && inactive pat.pat_desc
+

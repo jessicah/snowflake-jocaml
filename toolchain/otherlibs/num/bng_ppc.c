@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: bng_ppc.c 7430 2006-05-31 08:16:34Z xleroy $ */
+/* $Id: bng_ppc.c 8113 2007-03-23 09:01:11Z maranget $ */
 
 /* Code specific to the PowerPC architecture. */
 

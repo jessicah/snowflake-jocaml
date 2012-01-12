@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: stat.c 9270 2009-05-20 11:52:42Z doligez $ */
+/* $Id: stat.c 8113 2007-03-23 09:01:11Z maranget $ */
 
 #include <errno.h>
 #include <mlvalues.h>
@@ -107,5 +107,9 @@ CAMLprim value unix_fstat_64(value handle)
 
   ret = _fstati64(win_CRT_fd_of_filedescr(handle), &buf);
   if (ret == -1) uerror("fstat", Nothing);
+  if (buf.st_size > Max_long) {
+    win32_maperr(ERROR_ARITHMETIC_OVERFLOW);
+    uerror("fstat", Nothing);
+  }
   return stat_aux(1, &buf);
 }

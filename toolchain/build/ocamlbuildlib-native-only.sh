@@ -12,7 +12,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: ocamlbuildlib-native-only.sh 11041 2011-05-13 08:40:05Z doligez $
+# $Id: ocamlbuildlib-native-only.sh 11113 2011-07-07 14:32:00Z maranget $
 
 set -e
 cd `dirname $0`/..

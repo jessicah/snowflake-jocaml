@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: moreLabels.ml 4144 2001-12-07 13:41:02Z xleroy $ *)
+(* $Id: moreLabels.ml 7198 2005-10-27 11:22:54Z maranget $ *)
 
 (* Module [MoreLabels]: meta-module for compatibility labelled libraries *)
 

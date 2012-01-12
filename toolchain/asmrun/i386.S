@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: i386.S 8962 2008-08-01 08:04:57Z xleroy $ */
+/* $Id: i386.S 9081 2008-10-14 07:37:28Z maranget $ */
 
 /* Asm part of the runtime system, Intel 386 processor */
 /* Must be preprocessed by cpp */

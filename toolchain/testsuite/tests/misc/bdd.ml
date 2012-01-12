@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: bdd.ml 10713 2010-10-08 11:53:19Z doligez $ *)
+(* $Id: bdd.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Translated to Caml by Xavier Leroy *)
 (* Original code written in SML by ... *)

@@ -11,7 +11,7 @@
 
 /* Contributed by Stephane Glondu <steph@glondu.net> */
 
-/* $Id: setgroups.c 9220 2009-04-01 16:50:10Z xleroy $ */
+/* $Id: setgroups.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <mlvalues.h>
 #include <alloc.h>

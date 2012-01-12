@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: tetris.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: tetris.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (* A Tetris game for LablTk *)
 (* written by Jun P. Furuse *)

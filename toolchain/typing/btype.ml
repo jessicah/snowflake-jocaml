@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: btype.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: btype.ml 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Basic operations on core types *)
 
@@ -195,6 +195,7 @@ let iter_type_expr f ty =
   | Tsubst ty           -> f ty
   | Tunivar             -> ()
   | Tpoly (ty, tyl)     -> f ty; List.iter f tyl
+  | Tproc _             -> ()
   | Tpackage (_, _, l)  -> List.iter f l
 
 let rec iter_abbrev f = function
@@ -257,7 +258,9 @@ let rec copy_type_desc f = function
   | Tpoly (ty, tyl)     ->
       let tyl = List.map (fun x -> norm_univar (f x)) tyl in
       Tpoly (f ty, tyl)
+  | Tproc _ -> assert false
   | Tpackage (p, n, l)  -> Tpackage (p, n, List.map f l)
+
 
 (* Utilities for copying *)
 

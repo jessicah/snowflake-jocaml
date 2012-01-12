@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: syntaxerr.mli 9316 2009-07-15 14:06:37Z xleroy $ *)
+(* $Id: syntaxerr.mli 10518 2010-06-04 19:19:28Z maranget $ *)
 
 (* Auxiliary type for reporting syntax errors *)
 

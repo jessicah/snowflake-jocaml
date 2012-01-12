@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: signals_machdep.h 7905 2007-02-23 09:43:14Z xleroy $ */
+/* $Id: signals_machdep.h 8113 2007-03-23 09:01:11Z maranget $ */
 
 /* Processor-specific operation: atomic "read and clear" */
 

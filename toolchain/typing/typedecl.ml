@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typedecl.ml 10669 2010-09-06 06:34:13Z garrigue $ *)
+(* $Id: typedecl.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (**** Typing of type definitions ****)
 
@@ -464,6 +464,7 @@ let compute_variance env tvl nega posi cntr ty =
       | Tpoly (ty, _) ->
           compute_same ty
       | Tvar | Tnil | Tlink _ | Tunivar -> ()
+      | Tproc _ -> assert false
       | Tpackage (_, _, tyl) ->
           List.iter (compute_variance_rec true true true) tyl
     end
@@ -750,6 +751,17 @@ let transl_exn_rebind env loc lid =
       raise(Error(loc, Unbound_exception lid)) in
   match cdescr.cstr_tag with
     Cstr_exception path -> (path, cdescr.cstr_args)
+  | _ -> raise(Error(loc, Not_an_exception lid))
+
+(* exception globalization, just check lid is an exception constructor *)
+let transl_exn_global env loc lid =
+  let cdescr =
+    try
+      Env.lookup_constructor lid env
+    with Not_found ->
+      raise(Error(loc, Unbound_exception lid)) in
+  match cdescr.cstr_tag with
+    Cstr_exception path -> path
   | _ -> raise(Error(loc, Not_an_exception lid))
 
 (* Translate a value declaration *)

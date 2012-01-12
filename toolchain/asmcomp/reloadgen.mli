@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: reloadgen.mli 10450 2010-05-21 12:00:49Z doligez $ *)
+(* $Id: reloadgen.mli 10507 2010-06-04 19:16:58Z maranget $ *)
 
 class reload_generic : object
   method reload_operation :

@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: mmap_unix.c 10648 2010-08-18 12:46:09Z doligez $ */
+/* $Id: mmap_unix.c 11113 2011-07-07 14:32:00Z maranget $ */
 
 #include <stddef.h>
 #include <string.h>
@@ -44,7 +44,7 @@ CAMLprim value caml_ba_map_file(value vfd, value vkind, value vlayout,
 {
   int fd, flags, major_dim, shared;
   intnat num_dims, i;
-  intnat dim[CAML_BA_MAX_NUM_DIMS];
+  intnat dim[MAX_NUM_DIMS];
   file_offset currpos, startpos, file_size, data_size;
   uintnat array_size, page, delta;
   char c;
@@ -54,32 +54,40 @@ CAMLprim value caml_ba_map_file(value vfd, value vkind, value vlayout,
   flags = Int_val(vkind) | Int_val(vlayout);
   startpos = File_offset_val(vstart);
   num_dims = Wosize_val(vdim);
-  major_dim = flags & CAML_BA_FORTRAN_LAYOUT ? num_dims - 1 : 0;
+  major_dim = flags & BIGARRAY_FORTRAN_LAYOUT ? num_dims - 1 : 0;
   /* Extract dimensions from Caml array */
   num_dims = Wosize_val(vdim);
-  if (num_dims < 1 || num_dims > CAML_BA_MAX_NUM_DIMS)
-    caml_invalid_argument("Bigarray.mmap: bad number of dimensions");
+  if (num_dims < 1 || num_dims > MAX_NUM_DIMS)
+    invalid_argument("Bigarray.mmap: bad number of dimensions");
   for (i = 0; i < num_dims; i++) {
     dim[i] = Long_val(Field(vdim, i));
     if (dim[i] == -1 && i == major_dim) continue;
-    if (dim[i] < 0)
-      caml_invalid_argument("Bigarray.create: negative dimension");
+    if (dim[i] < 0 || dim[i] > 0x7FFFFFFFL)
+      invalid_argument("Bigarray.create: negative dimension");
   }
   /* Determine file size */
   caml_enter_blocking_section();
   currpos = lseek(fd, 0, SEEK_CUR);
+<<<<<<< .courant
+  if (currpos == -1) sys_error(NO_ARG);
+=======
   if (currpos == -1) {
     caml_leave_blocking_section();
     caml_sys_error(NO_ARG);
   }
+>>>>>>> .fusion-droit.r10497
   file_size = lseek(fd, 0, SEEK_END);
+<<<<<<< .courant
+  if (file_size == -1) sys_error(NO_ARG);
+=======
   if (file_size == -1) {
     caml_leave_blocking_section();
     caml_sys_error(NO_ARG);
   }
+>>>>>>> .fusion-droit.r10497
   /* Determine array size in bytes (or size of array without the major
      dimension if that dimension wasn't specified) */
-  array_size = caml_ba_element_size[flags & CAML_BA_KIND_MASK];
+  array_size = bigarray_element_size[flags & BIGARRAY_KIND_MASK];
   for (i = 0; i < num_dims; i++)
     if (dim[i] != -1) array_size *= dim[i];
   /* Check if the major dimension is unknown */
@@ -87,27 +95,31 @@ CAMLprim value caml_ba_map_file(value vfd, value vkind, value vlayout,
     /* Determine major dimension from file size */
     if (file_size < startpos) {
       caml_leave_blocking_section();
-      caml_failwith("Bigarray.mmap: file position exceeds file size");
+      failwith("Bigarray.mmap: file position exceeds file size");
     }
     data_size = file_size - startpos;
     dim[major_dim] = (uintnat) (data_size / array_size);
     array_size = dim[major_dim] * array_size;
     if (array_size != data_size) {
       caml_leave_blocking_section();
-      caml_failwith("Bigarray.mmap: file size doesn't match array dimensions");
+      failwith("Bigarray.mmap: file size doesn't match array dimensions");
     }
   } else {
     /* Check that file is large enough, and grow it otherwise */
     if (file_size < startpos + array_size) {
       if (lseek(fd, startpos + array_size - 1, SEEK_SET) == -1) {
         caml_leave_blocking_section();
-        caml_sys_error(NO_ARG);
+        sys_error(NO_ARG);
       }
       c = 0;
+<<<<<<< .courant
+      if (write(fd, &c, 1) != 1) sys_error(NO_ARG);
+=======
       if (write(fd, &c, 1) != 1) {
         caml_leave_blocking_section();
         caml_sys_error(NO_ARG);
       }
+>>>>>>> .fusion-droit.r10497
     }
   }
   /* Restore original file position */
@@ -119,11 +131,15 @@ CAMLprim value caml_ba_map_file(value vfd, value vkind, value vlayout,
   shared = Bool_val(vshared) ? MAP_SHARED : MAP_PRIVATE;
   addr = mmap(NULL, array_size + delta, PROT_READ | PROT_WRITE,
               shared, fd, startpos - delta);
+<<<<<<< .courant
+  if (addr == (void *) MAP_FAILED) sys_error(NO_ARG);
+=======
   caml_leave_blocking_section();
   if (addr == (void *) MAP_FAILED) caml_sys_error(NO_ARG);
+>>>>>>> .fusion-droit.r10497
   addr = (void *) ((uintnat) addr + delta);
   /* Build and return the Caml bigarray */
-  return caml_ba_alloc(flags | CAML_BA_MAPPED_FILE, num_dims, addr, dim);
+  return alloc_bigarray(flags | BIGARRAY_MAPPED_FILE, num_dims, addr, dim);
 }
 
 #else

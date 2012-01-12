@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typemod.mli 10419 2010-05-18 17:18:24Z frisch $ *)
+(* $Id: typemod.mli 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Type-checking of the module language *)
 

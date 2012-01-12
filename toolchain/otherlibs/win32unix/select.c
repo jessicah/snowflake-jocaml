@@ -2,81 +2,52 @@
 /*                                                                     */
 /*                           Objective Caml                            */
 /*                                                                     */
-/*  Contributed by Sylvain Le Gall for Lexifi                          */
+/*            Xavier Leroy, projet Cristal, INRIA Rocquencourt         */
 /*                                                                     */
-/*  Copyright 2008 Institut National de Recherche en Informatique et   */
+/*  Copyright 1996 Institut National de Recherche en Informatique et   */
 /*  en Automatique.  All rights reserved.  This file is distributed    */
 /*  under the terms of the GNU Library General Public License, with    */
 /*  the special exception on linking described in file ../../LICENSE.  */
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: select.c 10467 2010-05-25 13:01:06Z xleroy $ */
+/* $Id: select.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <mlvalues.h>
 #include <alloc.h>
 #include <memory.h>
 #include <fail.h>
 #include <signals.h>
-#include <winsock2.h>
-#include <windows.h>
 #include <stdio.h>
 #include "unixsupport.h"
-#include "windbug.h"
-#include "winworker.h"
-#include "winlist.h"
 
-/* This constant define the maximum number of objects that
- * can be handle by a SELECTDATA.
- * It takes the following parameters into account:
- * - limitation on number of objects is mostly due to limitation
- *   a WaitForMultipleObjects
- * - there is always an event "hStop" to watch 
- *
- * This lead to pick the following value as the biggest possible
- * value
- */
-#define MAXIMUM_SELECT_OBJECTS (MAXIMUM_WAIT_OBJECTS - 1)
-
-/* Manage set of handle */
-typedef struct _SELECTHANDLESET {
-  LPHANDLE lpHdl;
-  DWORD    nMax;
-  DWORD    nLast;
-} SELECTHANDLESET;
-
-typedef SELECTHANDLESET *LPSELECTHANDLESET;
-
-void handle_set_init (LPSELECTHANDLESET hds, LPHANDLE lpHdl, DWORD max)
+static void fdlist_to_fdset(value fdlist, fd_set *fdset)
 {
-  DWORD i;
-
-  hds->lpHdl = lpHdl;
-  hds->nMax  = max;
-  hds->nLast = 0;
-
-  /* Set to invalid value every entry of the handle */
-  for (i = 0; i < hds->nMax; i++)
-  {
-    hds->lpHdl[i] = INVALID_HANDLE_VALUE;
-  };
-}
-
-void handle_set_add (LPSELECTHANDLESET hds, HANDLE hdl)
-{
-  LPSELECTHANDLESET res;
-
-  if (hds->nLast < hds->nMax)
-  {
-    hds->lpHdl[hds->nLast] = hdl;
-    hds->nLast++;
+  value l;
+  FD_ZERO(fdset);
+  for (l = fdlist; l != Val_int(0); l = Field(l, 1)) {
+    FD_SET(Socket_val(Field(l, 0)), fdset);
   }
+<<<<<<< .courant
+=======
 
   DEBUG_PRINT("Adding handle %x to set %x", hdl, hds);
+>>>>>>> .fusion-droit.r10497
 }
 
-BOOL handle_set_mem (LPSELECTHANDLESET hds, HANDLE hdl)
+static value fdset_to_fdlist(value fdlist, fd_set *fdset)
 {
+<<<<<<< .courant
+  value res = Val_int(0);
+  Begin_roots2(fdlist, res)
+    for (/*nothing*/; fdlist != Val_int(0); fdlist = Field(fdlist, 1)) {
+      value s = Field(fdlist, 0);
+      if (FD_ISSET(Socket_val(s), fdset)) {
+        value newres = alloc_small(2, 0);
+        Field(newres, 0) = s;
+        Field(newres, 1) = res;
+        res = newres;
+=======
   BOOL  res;
   DWORD i;
 
@@ -363,8 +334,12 @@ void read_console_poll(HANDLE hStop, void *_data)
       if (check_error(lpSelectData, ReadConsoleInput(lpQuery->hFileDescr, &record, 1, &n) == 0))
       {
         break;
+>>>>>>> .fusion-droit.r10497
       }
     }
+<<<<<<< .courant
+  End_roots();
+=======
   };
 }
 
@@ -381,24 +356,43 @@ LPSELECTDATA read_console_poll_add (LPSELECTDATA lpSelectData,
   res->funcWorker = read_console_poll;
   select_data_query_add(res, SELECT_MODE_READ, hFileDescr, lpOrigIdx, uFlagsFd);
 
+>>>>>>> .fusion-droit.r10497
   return res;
 }
 
-/***********************/
-/*        Pipe         */
-/***********************/
-
-/* Monitor a pipe for input */
-void read_pipe_poll (HANDLE hStop, void *_data)
+CAMLprim value unix_select(value readfds, value writefds, value exceptfds, value timeout)
 {
+<<<<<<< .courant
+  fd_set read, write, except;
+  double tm;
+  struct timeval tv;
+  struct timeval * tvp;
+  int retcode;
+  value res;
+  value read_list = Val_unit, write_list = Val_unit, except_list = Val_unit;
+  DWORD err = 0;
+=======
   DWORD         res;
   DWORD         event;
   DWORD         n;
   LPSELECTQUERY iterQuery;
   LPSELECTDATA  lpSelectData;
   DWORD         i;
+>>>>>>> .fusion-droit.r10497
   DWORD         wait;
 
+<<<<<<< .courant
+  Begin_roots3 (readfds, writefds, exceptfds)
+  Begin_roots3 (read_list, write_list, except_list)
+    tm = Double_val(timeout);
+    if (readfds == Val_int(0)
+	&& writefds == Val_int(0)
+	&& exceptfds == Val_int(0)) {
+      if ( tm > 0.0 ) {
+	enter_blocking_section();
+	Sleep( (int)(tm * 1000));
+	leave_blocking_section();
+=======
   /* Poll pipe */
   event = 0;
   n = 0;
@@ -451,7 +445,21 @@ void read_pipe_poll (HANDLE hStop, void *_data)
       if (event == WAIT_OBJECT_0 || check_error(lpSelectData, event == WAIT_FAILED))
       {
         break;
+>>>>>>> .fusion-droit.r10497
       }
+<<<<<<< .courant
+      read_list = write_list = except_list = Val_int(0);
+    } else {      
+      fdlist_to_fdset(readfds, &read);
+      fdlist_to_fdset(writefds, &write);
+      fdlist_to_fdset(exceptfds, &except);
+      if (tm < 0.0)
+	tvp = (struct timeval *) NULL;
+      else {
+	tv.tv_sec = (int) tm;
+	tv.tv_usec = (int) (1e6 * (tm - (int) tm));
+	tvp = &tv;
+=======
     }
   }
   DEBUG_PRINT("Finish checking data on pipe");
@@ -550,7 +558,17 @@ void socket_poll (HANDLE hStop, void *_data)
         {
           select_data_result_add(lpSelectData, iterQuery->EMode, iterQuery->lpOrigIdx);
         }
+>>>>>>> .fusion-droit.r10497
       }
+<<<<<<< .courant
+      enter_blocking_section();
+      if (select(FD_SETSIZE, &read, &write, &except, tvp) == -1)
+        err = WSAGetLastError();
+      leave_blocking_section();
+      if (err) {
+	win32_maperr(err);
+	uerror("select", Nothing);
+=======
       /* WSAEventSelect() automatically sets socket to nonblocking mode.
          Restore the blocking one. */
       if (iterQuery->uFlagsFd & FLAGS_FD_IS_BLOCKING)
@@ -715,7 +733,13 @@ LPSELECTDATA select_data_dispatch (LPSELECTDATA lpSelectData, SELECTMODE EMode, 
       if (EMode == SELECT_MODE_READ)
       {
         res = read_console_poll_add(res, EMode, hFileDescr, lpOrigIdx, uFlagsFd);
+>>>>>>> .fusion-droit.r10497
       }
+<<<<<<< .courant
+      read_list = fdset_to_fdlist(readfds, &read);
+      write_list = fdset_to_fdlist(writefds, &write);
+      except_list = fdset_to_fdlist(exceptfds, &except);
+=======
       else if (EMode == SELECT_MODE_WRITE)
       {
         res = static_poll_add(res, EMode, hFileDescr, lpOrigIdx, uFlagsFd);
@@ -900,7 +924,17 @@ CAMLprim value unix_select(value readfds, value writefds, value exceptfds, value
     {
       handle_set_add(&hds, Handle_val(fd));
       lpSelectData = select_data_dispatch(lpSelectData, SELECT_MODE_READ, fd, i++);
+>>>>>>> .fusion-droit.r10497
     }
+<<<<<<< .courant
+    res = alloc_small(3, 0);
+    Field(res, 0) = read_list;
+    Field(res, 1) = write_list;
+    Field(res, 2) = except_list;
+  End_roots();
+  End_roots();
+  return res;
+=======
     else
     {
       DEBUG_PRINT("Discarding handle %x which is already monitor for read", Handle_val(fd));
@@ -1109,4 +1143,5 @@ CAMLprim value unix_select(value readfds, value writefds, value exceptfds, value
   DEBUG_PRINT("out select");
 
   CAMLreturn(res);
+>>>>>>> .fusion-droit.r10497
 }

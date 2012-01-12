@@ -10,7 +10,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile 10661 2010-08-30 10:16:22Z doligez $
+# $Id: Makefile 11113 2011-07-07 14:32:00Z maranget $
 
 include ../config/Makefile
 
@@ -20,7 +20,7 @@ FILES=	caml-font.el caml-hilit.el caml.el camldebug.el \
 	caml-xemacs.el caml-emacs.el
 
 # Where to install. If empty, automatically determined.
-#EMACSDIR=
+EMACSDIR=/usr/local/share/emacs/site-lisp
 
 # Name of Emacs executable
 EMACS=emacs

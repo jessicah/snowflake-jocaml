@@ -11,16 +11,16 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.shared 10448 2010-05-21 11:28:21Z doligez $
+# $Id: Makefile.shared 10510 2010-06-04 19:17:45Z maranget $
 
 include ../config/Makefile
 RUNTIME=../boot/ocamlrun
 COMPILER=../ocamlc
 CAMLC=$(RUNTIME) $(COMPILER)
-COMPFLAGS=-strict-sequence -g -warn-error A -nostdlib
+COMPFLAGS=-strict-sequence -g -warn-error A -nostdlib $(NOJOIN)
 OPTCOMPILER=../ocamlopt
 CAMLOPT=$(RUNTIME) $(OPTCOMPILER)
-OPTCOMPFLAGS=-warn-error A -nostdlib -g
+OPTCOMPFLAGS=-warn-error A -nostdlib -g $(NOJOIN)
 CAMLDEP=../boot/ocamlrun ../tools/ocamldep
 
 OBJS=pervasives.cmo $(OTHERS)

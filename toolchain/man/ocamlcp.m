@@ -1,5 +1,3 @@
-\" $Id: ocamlcp.m 9025 2008-09-15 14:05:30Z doligez $
-
 .TH OCAMLCP 1
 
 .SH NAME
@@ -18,7 +16,7 @@ ocamlcp \- The Objective Caml profiling compiler
 .SH DESCRIPTION
 The
 .B ocamlcp
-command is a front-end to
+script is a front-end to
 .BR ocamlc (1)
 that instruments the source code, adding code to record how many times
 functions are called, branches of conditionals are taken, ...
@@ -38,62 +36,53 @@ options,
 .B ocamlcp
 accepts the following option controlling the amount of profiling
 information:
+
 .TP
-.BI \-p \ letters
-The
-.I letters
+.BR \-p \ letters
+The letters following
+.B -p
 indicate which parts of the program should be profiled:
+
 .TP
 .B a
 all options
 .TP
 .B f
-function calls : a count point is set at the beginning of each function body
+function calls : a count point is set at the beginning of function bodies
 .TP
 .B i
-.BR if \ ... \ then \ ... \ else :
-count points are set in both
-.BR then \ and \ else
-branches
+if... then... else: count points are set in
+both "then" branch and "else" branch
 .TP
 .B l
-\BR while , \ for
-loops: a count point is set at the beginning of the loop body
+while, for loops: a count point is set at the beginning of
+the loop body
 .TP
 .B m
-.B match
-branches: a count point is set at the beginning of the
-body of each branch of a pattern-matching
+"match" branches: a count point is set at the beginning of the
+body of each branch
 .TP
 .B t
-.BR try \ ... \ with
-branches: a count point is set at the beginning of the body of each
-branch of an exception catcher
+try...with branches: a count point is set at the
+beginning of the body of each branch
 
-.PP
-For instance, compiling with
-.B ocamlcp\ \-pfilm
-profiles function calls,
-.BR if \ ... \ then \ ... \ else \ ...,
-loops, and pattern matching.
+For instance, compiling with 
+.B ocamlcp \-pfilm
+profiles function calls, if... then... else..., loops, and pattern
+matching.
 
-Calling
+Calling 
 .BR ocamlcp (1)
 without the
 .B \-p
 option defaults to
-.B \-p\ fm
-meaning that only function calls and pattern matching are profiled.
-
-Note: due to the implementation of streams and stream patterns as
-syntactic sugar, it is hard to predict what parts of stream expressions
-and patterns will be profiled by a given flag.  To profile a program with
-streams, we recommend using
-.BR ocamlcp\ \-p\ a .
+.B \-p fm
+meaning
+that only function calls and pattern matching are profiled.
 
 .SH SEE ALSO
 .BR ocamlc (1),
 .BR ocamlprof (1).
 .br
-.IR "The Objective Caml user's manual" ,
+.I The Objective Caml user's manual,
 chapter "Profiling".

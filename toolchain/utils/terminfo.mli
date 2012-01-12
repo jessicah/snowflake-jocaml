@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: terminfo.mli 6045 2004-01-01 16:42:43Z doligez $ *)
+(* $Id: terminfo.mli 7201 2005-10-27 12:05:38Z maranget $ *)
 
 (* Basic interface to the terminfo database *)
 

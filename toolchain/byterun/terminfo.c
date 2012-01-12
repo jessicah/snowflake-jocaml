@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: terminfo.c 6045 2004-01-01 16:42:43Z doligez $ */
+/* $Id: terminfo.c 7192 2005-10-27 09:14:16Z maranget $ */
 
 /* Read and output terminal commands */
 

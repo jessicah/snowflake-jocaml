@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typemod.ml 10706 2010-10-07 02:22:19Z garrigue $ *)
+(* $Id: typemod.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Type-checking of the module language *)
 
@@ -545,6 +545,17 @@ let rec bound_value_identifiers = function
   | Tsig_class(id, decl, _) :: rem -> id :: bound_value_identifiers rem
   | _ :: rem -> bound_value_identifiers rem
 
+(* Type a module value expression *)
+
+(*> JOCAML *)
+(* Channels appear as regular values in signatures *)
+let make_sig_channel_value env id =
+  try
+    let desc = Env.find_value (Pident id) env in
+    Tsig_value(id, {desc with val_kind=Val_reg})
+  with Not_found -> assert false
+(*< JOCAML *)
+
 (* Helpers for typing recursive modules *)
 
 let anchor_submodule name anchor =
@@ -758,6 +769,27 @@ and type_structure funct_body anchor env sstr scope =
         (Tstr_value(rec_flag, defs) :: str_rem,
          map_end make_sig_value bound_idents sig_rem,
          final_env)
+(*> JOCAML *)
+    | {pstr_desc = Pstr_def (sdefs) ; pstr_loc = loc} :: srem ->
+	let scope =
+	  let start = match srem with
+	  | [] -> loc.Location.loc_end
+	  | {pstr_loc = loc2} :: _ -> loc2.Location.loc_start in
+	  Some (Annot.Idef {scope with Location.loc_start = start}) in
+        let (defs, newenv) =
+          Typecore.type_joindefinition env sdefs scope in
+        let (str_rem, sig_rem, final_env) = type_struct newenv srem in
+        let bound_idents = Typedtree.def_bound_idents defs in
+        (Tstr_def (defs) :: str_rem,
+         map_end (make_sig_channel_value newenv) bound_idents sig_rem,
+         final_env)
+    | {pstr_desc = Pstr_exn_global(longid); pstr_loc = loc} :: srem ->
+        let path = Typedecl.transl_exn_global env loc longid in
+        let (str_rem, sig_rem, final_env) = type_struct env srem in
+        (Tstr_exn_global (loc,path) :: str_rem,
+         sig_rem,
+         final_env)
+(*< JOCAML *)
     | {pstr_desc = Pstr_primitive(name, sdesc)} :: srem ->
         let desc = Typedecl.transl_value_decl env sdesc in
         let (id, newenv) = Env.enter_value name desc env in

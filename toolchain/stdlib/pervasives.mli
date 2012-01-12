@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: pervasives.mli 11048 2011-05-17 13:31:32Z doligez $ *)
+(* $Id: pervasives.mli 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (** The initially opened module.
 

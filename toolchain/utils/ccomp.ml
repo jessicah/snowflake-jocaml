@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ccomp.ml 10326 2010-04-28 12:09:32Z xleroy $ *)
+(* $Id: ccomp.ml 10513 2010-06-04 19:18:10Z maranget $ *)
 
 (* Compiling C files and building C libraries *)
 

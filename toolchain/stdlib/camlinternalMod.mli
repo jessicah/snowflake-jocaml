@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: camlinternalMod.mli 6586 2004-08-12 12:57:00Z xleroy $ *)
+(* $Id: camlinternalMod.mli 7198 2005-10-27 11:22:54Z maranget $ *)
 
 type shape =
   | Function

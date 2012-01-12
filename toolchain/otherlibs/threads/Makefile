@@ -11,19 +11,29 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile 9153 2008-12-03 18:09:09Z doligez $
+# $Id: Makefile 11118 2011-07-08 09:23:38Z maranget $
 
 include ../../config/Makefile
 
 CC=$(BYTECC)
 CFLAGS=-I../../byterun -O $(BYTECCCOMPOPTS) $(SHAREDCCCOMPOPTS) -g
-CAMLC=../../ocamlcomp.sh -I ../unix
+COMPILER=../../ocamlcomp.sh -I ../unix $(NOJOIN)
+CAMLC=../../ocamlcomp.sh -I ../unix $(NOJOIN)
+JCC=../../ocamlcomp.sh -I ../unix 
 MKLIB=../../boot/ocamlrun ../../tools/ocamlmklib
 COMPFLAGS=-warn-error A
+OCAMLPP=-pp '../../tools/remove_DEBUG'
 
-C_OBJS=scheduler.o
+JOIN_C_OBJS=join.o
 
-CAML_OBJS=thread.cmo mutex.cmo condition.cmo event.cmo threadUnix.cmo
+JOIN_OBJS=join_debug.cmo join_misc.cmo join_link.cmo  join_hash.cmo\
+ join_set.cmo join_queue.cmo join_extern.cmo join_scheduler.cmo join_port.cmo\
+ join_message.cmo join_space.cmo join_prim.cmo join_test.cmo
+
+C_OBJS=scheduler.o $(JOIN_C_OBJS)
+
+CAML_OBJS=thread.cmo mutex.cmo condition.cmo event.cmo threadUnix.cmo $(JOIN_OBJS)
+
 
 LIB=../../stdlib
 
@@ -49,7 +59,7 @@ UNIXLIB=../unix
 
 UNIXLIB_OBJS=unix.cmo $(UNIXLIB)/unixLabels.cmo
 
-all: libvmthreads.a threads.cma stdlib.cma unix.cma
+all: libvmthreads.a threads.cma stdlib.cma unix.cma 
 
 allopt:
 
@@ -57,7 +67,7 @@ libvmthreads.a: $(C_OBJS)
 	$(MKLIB) -o threads -oc vmthreads $(C_OBJS)
 
 threads.cma: $(CAML_OBJS)
-	$(MKLIB) -ocamlc '$(CAMLC)' -o threads -oc vmthreads $(CAML_OBJS)
+	$(MKLIB) -ocamlc '$(COMPILER)' -o threads -oc vmthreads $(CAML_OBJS)
 
 stdlib.cma: $(LIB_OBJS)
 	$(CAMLC) -a -o stdlib.cma $(LIB_OBJS)
@@ -105,23 +115,28 @@ install:
 	cp libvmthreads.a $(LIBDIR)/vmthreads/libvmthreads.a
 	cd $(LIBDIR)/vmthreads; $(RANLIB) libvmthreads.a
 	cp thread.cmi mutex.cmi condition.cmi event.cmi threadUnix.cmi threads.cma stdlib.cma unix.cma $(LIBDIR)/vmthreads
+	cp join_prim.cmi join_test.cmi $(LIBDIR)/vmthreads
 	cp thread.mli mutex.mli condition.mli event.mli threadUnix.mli $(LIBDIR)/vmthreads
 
 installopt:
 
-.SUFFIXES: .ml .mli .cmo .cmi .cmx
+.SUFFIXES: .jml .ml .mli .cmo .cmi .cmx
 
 .mli.cmi:
 	$(CAMLC) -c $(COMPFLAGS) $<
 
 .ml.cmo:
-	$(CAMLC) -c $(COMPFLAGS) $<
+	$(CAMLC) -c $(COMPFLAGS) $(OCAMLPP) $<
+
+.jml.cmo:
+	$(JCC) -c $(COMPFLAGS) $(OCAMLPP) -nostdlib -impl $<
 
 .ml.cmx:
 	$(CAMLOPT) -c $(COMPFLAGS) $<
+	$(CAMLOPT) -c $(COMPFLAGS) $(OCAMLPP) $<
 
 depend:
 	gcc -MM $(CFLAGS) *.c > .depend
-	../../boot/ocamlrun ../../tools/ocamldep *.mli *.ml >> .depend
+	../../boot/ocamlrun ../../tools/ocamldep -nojoin *.mli *.ml >> .depend
 
 include .depend

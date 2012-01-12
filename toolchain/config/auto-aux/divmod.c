@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: divmod.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: divmod.c 10503 2010-06-04 19:15:54Z maranget $ */
 
 /* Test semantics of division and modulus for negative arguments */
 

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: cmo_format.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: cmo_format.mli 10506 2010-06-04 19:16:52Z maranget $ *)
 
 (* Symbol table information for .cmo and .cma files *)
 

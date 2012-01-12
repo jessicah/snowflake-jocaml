@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ocamldep.ml 10914 2011-01-04 10:33:49Z xclerc $ *)
+(* $Id: ocamldep.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 open Format
 open Location
@@ -42,7 +42,9 @@ let fix_slash s =
 
 let add_to_load_path dir =
   try
-    let dir = Misc.expand_directory Config.standard_library dir in
+    let dir =
+      Misc.expand_directory
+        Config.standard_library Config.ocaml_library dir in
     let contents = Sys.readdir dir in
     load_path := !load_path @ [dir, contents]
   with Sys_error msg ->
@@ -293,7 +295,7 @@ let file_dependencies source_file =
 
 (* Entry point *)
 
-let usage = "Usage: ocamldep [options] <source files>\nOptions are:"
+let usage = "Usage: jocamldep [options] <source files>\nOptions are:"
 
 let print_version () =
   printf "ocamldep, version %s@." Sys.ocaml_version;
@@ -309,6 +311,8 @@ let _ =
   Clflags.classic := false;
   add_to_load_path Filename.current_dir_name;
   Arg.parse [
+     "-nojoin", Arg.Set  Clflags.nojoin,
+       "act over pure OCaml source files" ;
      "-I", Arg.String add_to_load_path,
        "<dir>  Add <dir> to the list of include directories";
      "-impl", Arg.String (file_dependencies_as ML),

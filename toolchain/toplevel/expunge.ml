@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: expunge.ml 6074 2004-01-16 15:24:03Z doligez $ *)
+(* $Id: expunge.ml 7200 2005-10-27 12:00:25Z maranget $ *)
 
 (* "Expunge" a toplevel by removing compiler modules from the global List.map.
    Usage: expunge <source file> <dest file> <names of modules to keep> *)

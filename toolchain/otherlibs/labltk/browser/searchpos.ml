@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: searchpos.ml 10227 2010-04-02 12:53:33Z xleroy $ *)
+(* $Id: searchpos.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 open StdLabels
 open Support
@@ -143,8 +143,9 @@ let rec search_pos_class_type cl ~pos ~env =
         List.iter cfl ~f:
           begin function
               Pctf_inher cty -> search_pos_class_type cty ~pos ~env
-            | Pctf_val (_, _, _, ty, loc) ->
+            | Pctf_val (_, _, Some ty, loc) ->
                 if in_loc loc ~pos then search_pos_type ty ~pos ~env
+            | Pctf_val _ -> ()
             | Pctf_virt (_, _, ty, loc) ->
                 if in_loc loc ~pos then search_pos_type ty ~pos ~env
             | Pctf_meth (_, _, ty, loc) ->
@@ -167,11 +168,11 @@ let search_pos_type_decl td ~pos ~env =
     | None -> ()
     end;
     let rec search_tkind = function
-      Ptype_abstract -> ()
-    | Ptype_variant dl ->
+      Ptype_abstract | Ptype_private -> ()
+    | Ptype_variant (dl, _) ->
         List.iter dl
           ~f:(fun (_, tl, _) -> List.iter tl ~f:(search_pos_type ~pos ~env))
-    | Ptype_record dl ->
+    | Ptype_record (dl, _) ->
         List.iter dl ~f:(fun (_, _, t, _) -> search_pos_type t ~pos ~env) in
     search_tkind td.ptype_kind;
     List.iter td.ptype_cstrs ~f:
@@ -679,9 +680,13 @@ let rec search_pos_structure ~pos str =
   | Tstr_modtype _ -> ()
   | Tstr_open _ -> ()
   | Tstr_class l ->
-      List.iter l ~f:(fun (id, _, _, cl, _) -> search_pos_class_expr cl ~pos)
+      List.iter l ~f:(fun (id, _, _, cl) -> search_pos_class_expr cl ~pos)
   | Tstr_cltype _ -> ()
   | Tstr_include (m, _) -> search_pos_module_expr m ~pos
+(*>JOCAML*)
+  | Tstr_exn_global (_, _) -> ()
+  |Tstr_loc _|Tstr_def _ -> assert false
+(*<JOCAML*)
   end
 
 and search_pos_class_structure ~pos cls =
@@ -689,8 +694,7 @@ and search_pos_class_structure ~pos cls =
     begin function
         Cf_inher (cl, _, _) ->
           search_pos_class_expr cl ~pos
-      | Cf_val (_, _, Some exp, _) -> search_pos_expr exp ~pos
-      | Cf_val _ -> ()
+      | Cf_val (_, _, exp) -> search_pos_expr exp ~pos
       | Cf_meth (_, exp) -> search_pos_expr exp ~pos
       | Cf_let (_, pel, iel) ->
           List.iter pel ~f:
@@ -820,6 +824,10 @@ and search_pos_expr ~pos exp =
       search_pos_class_structure ~pos cls
   | Texp_pack modexp ->
       search_pos_module_expr modexp ~pos
+  | Texp_loc (_, _)
+  | Texp_def (_, _)|Texp_reply (_, _)|Texp_par (_, _)|Texp_spawn _
+  | Texp_asyncsend (_, _)|Texp_null
+    -> assert false (* no browser for jocaml *)
   end;
   add_found_str (`Exp(`Expr, exp.exp_type)) ~env:exp.exp_env ~loc:exp.exp_loc
   end
@@ -832,7 +840,6 @@ and search_pos_pat ~pos ~env pat =
       add_found_str (`Exp(`Val (Pident id), pat.pat_type))
         ~env ~loc:pat.pat_loc
   | Tpat_alias (pat, _) -> search_pos_pat pat ~pos ~env
-  | Tpat_lazy pat -> search_pos_pat pat ~pos ~env
   | Tpat_constant _ ->
       add_found_str (`Exp(`Const, pat.pat_type)) ~env ~loc:pat.pat_loc
   | Tpat_tuple l ->
@@ -880,7 +887,6 @@ let search_pos_ti ~pos = function
   | Ti_expr e  -> search_pos_expr ~pos e
   | Ti_class c -> search_pos_class_expr ~pos c
   | Ti_mod m   -> search_pos_module_expr ~pos m
-  | _ -> ()
 
 let rec search_pos_info ~pos = function
     [] -> []

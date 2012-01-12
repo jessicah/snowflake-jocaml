@@ -1,4 +1,4 @@
-(* $Id: addlabels.ml 10250 2010-04-08 03:58:41Z garrigue $ *)
+(* $Id: addlabels.ml 10514 2010-06-04 19:18:21Z maranget $ *)
 
 open StdLabels
 open Asttypes
@@ -281,6 +281,10 @@ let rec add_labels_expr ~text ~values ~classes expr =
   | Pexp_ident _ | Pexp_constant _ | Pexp_construct _ | Pexp_variant _
   | Pexp_new _ | Pexp_assertfalse | Pexp_object _ | Pexp_pack _ ->
       ()
+  |Pexp_def (_, _)|Pexp_reply (_, _)
+  | Pexp_par (_, _)|Pexp_spawn _
+    ->
+      assert false
 
 let rec add_labels_class ~text ~classes ~values ~methods cl =
   match cl.pcl_desc with

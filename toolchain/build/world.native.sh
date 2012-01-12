@@ -1,5 +1,5 @@
 #!/bin/sh
-# $Id: world.native.sh 10443 2010-05-20 09:44:25Z doligez $
+# $Id: world.native.sh 10526 2010-06-04 20:01:14Z maranget $
 set -e
 cd `dirname $0`/..
 . build/targets.sh

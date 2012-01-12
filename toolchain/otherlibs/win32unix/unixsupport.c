@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: unixsupport.c 10467 2010-05-25 13:01:06Z xleroy $ */
+/* $Id: unixsupport.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <stddef.h>
 #include <mlvalues.h>
@@ -67,8 +67,6 @@ value win_alloc_socket(SOCKET s)
   return res;
 }
 
-#if 0
-/* PR#4750: this function is no longer used */
 value win_alloc_handle_or_socket(HANDLE h)
 {
   value res = win_alloc_handle(h);
@@ -78,7 +76,6 @@ value win_alloc_handle_or_socket(HANDLE h)
     Descr_kind_val(res) = KIND_SOCKET;
   return res;
 }
-#endif
 
 /* Mapping of Windows error codes to POSIX error codes */
 
@@ -113,7 +110,6 @@ static struct error_entry win_error_table[] = {
   { ERROR_NO_PROC_SLOTS, 0, EAGAIN},
   { ERROR_DRIVE_LOCKED, 0, EACCES},
   { ERROR_BROKEN_PIPE, 0, EPIPE},
-  { ERROR_NO_DATA, 0, EPIPE},
   { ERROR_DISK_FULL, 0, ENOSPC},
   { ERROR_INVALID_TARGET_HANDLE, 0, EBADF},
   { ERROR_INVALID_HANDLE, 0, EINVAL},

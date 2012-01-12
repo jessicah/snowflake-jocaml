@@ -12,7 +12,7 @@
 
 /* Based on public-domain code from Berkeley Yacc */
 
-/* $Id: verbose.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: verbose.c 10512 2010-06-04 19:18:04Z maranget $ */
 
 
 #include "defs.h"

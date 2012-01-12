@@ -11,13 +11,13 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.msvc 10622 2010-07-07 12:04:32Z frisch $
+# $Id: Makefile.msvc 10634 2010-07-26 09:02:43Z maranget $
 
 # Configuration for Windows, Visual C++ compiler
 
 ######### General configuration
 
-PREFIX=C:/ocamlms
+PREFIX=C:/jocamlms
 
 ### Where to install the binaries.
 BINDIR=$(PREFIX)/bin

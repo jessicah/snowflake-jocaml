@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: extern.c 8978 2008-08-04 11:45:58Z xleroy $ */
+/* $Id: extern.c 9081 2008-10-14 07:37:28Z maranget $ */
 
 /* Structured output */
 
@@ -55,7 +55,7 @@ static struct trail_entry * extern_trail_cur, * extern_trail_limit;
 /* Forward declarations */
 
 static void extern_out_of_memory(void);
-static void extern_invalid_argument(char *msg);
+
 
 /* Initialize the trail */
 
@@ -133,6 +133,7 @@ struct output_block {
 
 static struct output_block * extern_output_first, * extern_output_block;
 
+
 static void init_extern_output(void)
 {
   extern_userprovided_output = NULL;
@@ -209,7 +210,7 @@ static void extern_out_of_memory(void)
   caml_raise_out_of_memory();
 }
 
-static void extern_invalid_argument(char *msg)
+extern void extern_invalid_argument(char *msg)
 {
   extern_replay_trail();
   free_extern_output();
@@ -285,6 +286,96 @@ static void writecode64(int code, intnat val)
 }
 #endif
 
+/*> JOCAML */
+
+#define MAX_SAVED 2
+#ifdef DEBUG
+#include <stdio.h>
+#endif
+static int32 saved_code[MAX_SAVED] ;
+static int ncodes_saved = 0 ;
+
+CAMLprim value caml_register_saved_code(value v)
+{
+  if (ncodes_saved >=  MAX_SAVED) {
+    caml_failwith("caml_register_saved_code called too many times\n") ;
+  }
+  saved_code[ncodes_saved] =  ((char *)Code_val(v)) - caml_code_area_start ;
+#ifdef DEBUG
+  fprintf(stderr, "CODE%i is %i\n", ncodes_saved, saved_code[ncodes_saved]) ;
+#endif
+  ncodes_saved++ ;
+  return Val_unit ;
+}
+
+/* Return offest in saved code tables or -1 when not present
+   Important: assumes code is not moving */
+static int caml_find_saved_code(code_t c)
+{
+  int i ;
+  int32 ofs = ((char *)c) - caml_code_area_start ;
+  for (i = 0 ; i < ncodes_saved ; i++) {
+    if (saved_code[i] == ofs) return i ;
+  }
+  return -1 ;
+}
+
+CAMLexport code_t caml_get_saved_code(int idx)
+{
+  if (idx < ncodes_saved) {
+    return (code_t)(caml_code_area_start + saved_code[idx]) ;
+  } else {
+    return NULL ;
+  }
+}
+
+static value saved_value[MAX_SAVED] ;
+static int nvalues_saved = 0 ;
+
+
+CAMLprim value caml_register_saved_value(value v)
+{
+  if (nvalues_saved >= MAX_SAVED) {
+    caml_failwith("caml_register_saved_value called too many times\n") ;
+  }
+  saved_value[nvalues_saved] = v ;
+  caml_register_global_root(&saved_value[nvalues_saved]) ;
+#ifdef DEBUG
+  fprintf(stderr, "REGISTER VALUE %i: %p\n", nvalues_saved, (void *)v) ;
+#endif
+  nvalues_saved++ ;
+  return Val_unit ;
+}
+
+static int caml_find_saved_value(value v)
+{
+  int i ;
+  for (i = 0 ; i < nvalues_saved ; i++) {
+    if (saved_value[i] == v) {
+#ifdef DEBUG
+      fprintf(stderr, "FOUND VALUE %i: %p\n", i, (void *)v) ;
+#endif
+      return i ;
+    }
+  }
+  return -1 ;
+}
+
+
+CAMLexport value caml_get_saved_value(int idx)
+{
+  if (idx < nvalues_saved) {
+#ifdef DEBUG
+  fprintf(stderr, "GET VALUE %i: %p\n", idx, (void *)(saved_value[idx])) ;
+#endif
+    return saved_value[idx] ;
+  } else {
+    return (value)NULL ;
+  }
+}
+
+/*< JOCAML */
+
 /* Marshal the given value in the output buffer */
 
 static void extern_rec(value v)
@@ -310,6 +401,7 @@ static void extern_rec(value v)
     header_t hd = Hd_val(v);
     tag_t tag = Tag_hd(hd);
     mlsize_t sz = Wosize_hd(hd);
+    char ctag ;
 
     if (tag == Forward_tag) {
       value f = Forward_val (v);
@@ -395,7 +487,14 @@ static void extern_rec(value v)
       writecode32(CODE_INFIXPOINTER, Infix_offset_hd(hd));
       extern_rec(v - Infix_offset_hd(hd));
       break;
-    case Custom_tag: {
+    case Custom_tag:
+      ctag = CODE_CUSTOM ;
+      goto custom;
+    case JoCustom_tag:
+      ctag = CODE_JOCUSTOM ;
+    custom:
+   /* < JOCAML */
+    {
       uintnat sz_32, sz_64;
       char * ident = Custom_ops_val(v)->identifier;
       void (*serialize)(value v, uintnat * wsize_32,
@@ -403,7 +502,7 @@ static void extern_rec(value v)
         = Custom_ops_val(v)->serialize;
       if (serialize == NULL)
         extern_invalid_argument("output_value: abstract value (Custom)");
-      Write(CODE_CUSTOM);
+      Write(ctag);
       writeblock(ident, strlen(ident) + 1);
       Custom_ops_val(v)->serialize(v, &sz_32, &sz_64);
       size_32 += 2 + ((sz_32 + 3) >> 2);  /* header + ops + data */
@@ -412,6 +511,15 @@ static void extern_rec(value v)
       break;
     }
     default: {
+      int ofs = caml_find_saved_value(v) ;
+      if (ofs >= 0) {
+        Write(CODE_SAVEDVALUE) ;
+        Write(ofs) ;
+        break ; /* saved values do not follow sharing mechanism */
+      }
+    }
+    /* <JOCAML */
+     {
       value field0;
       mlsize_t i;
       if (tag < 16 && sz < 8) {
@@ -440,6 +548,14 @@ static void extern_rec(value v)
   }
   else if ((char *) v >= caml_code_area_start &&
            (char *) v < caml_code_area_end) {
+    /* >JOCAML */
+    int ofs = caml_find_saved_code((code_t)v) ;
+    if (ofs >= 0) {
+      Write(CODE_SAVEDCODE) ;
+      Write(ofs) ;
+      return ;
+    }
+    /* <JOCAML */
     if (!extern_closures)
       extern_invalid_argument("output_value: functional value");
     writecode32(CODE_CODEPOINTER, (char *) v - caml_code_area_start);

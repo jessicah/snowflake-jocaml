@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: camlinternalLazy.ml 8974 2008-08-01 16:57:10Z mauny $ *)
+(* $Id: camlinternalLazy.ml 9081 2008-10-14 07:37:28Z maranget $ *)
 
 (* Internals of forcing lazy values. *)
 

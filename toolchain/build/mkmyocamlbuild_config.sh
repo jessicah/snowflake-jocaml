@@ -12,7 +12,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: mkmyocamlbuild_config.sh 10443 2010-05-20 09:44:25Z doligez $
+# $Id: mkmyocamlbuild_config.sh 10526 2010-06-04 20:01:14Z maranget $
 
 cd `dirname $0`/..
 

@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: extract_crc.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: extract_crc.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (* Print the digests of unit interfaces *)
 

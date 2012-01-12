@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: arith_flags.mli 4144 2001-12-07 13:41:02Z xleroy $ *)
+(* $Id: arith_flags.mli 4255 2002-01-16 16:32:52Z peskine $ *)
 
 val error_when_null_denominator_flag : bool ref
 val normalize_ratio_flag : bool ref

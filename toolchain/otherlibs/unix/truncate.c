@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: truncate.c 7849 2007-02-09 13:31:15Z doligez $ */
+/* $Id: truncate.c 8113 2007-03-23 09:01:11Z maranget $ */
 
 #include <sys/types.h>
 #include <mlvalues.h>

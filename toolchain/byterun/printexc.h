@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: printexc.h 6045 2004-01-01 16:42:43Z doligez $ */
+/* $Id: printexc.h 7192 2005-10-27 09:14:16Z maranget $ */
 
 #ifndef CAML_PRINTEXC_H
 #define CAML_PRINTEXC_H

@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: mlvalues.h 8970 2008-08-01 14:10:36Z xleroy $ */
+/* $Id: mlvalues.h 9081 2008-10-14 07:37:28Z maranget $ */
 
 #ifndef CAML_MLVALUES_H
 #define CAML_MLVALUES_H
@@ -201,6 +201,11 @@ CAMLextern value caml_get_public_method (value obj, value tag);
 /* This tag is used (with Forward_tag) to implement lazy values.
    See major_gc.c and stdlib/lazy.ml. */
 #define Lazy_tag 246
+
+/* >JOCAML */
+/* Behave like custom blocks, but can contain pointers to the heap */
+#define JoCustom_tag 245
+/* <JOCAML */
 
 /* Another special case: variants */
 CAMLextern value caml_hash_variant(char const * tag);

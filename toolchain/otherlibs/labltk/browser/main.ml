@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: main.ml 10444 2010-05-20 14:06:29Z doligez $ *)
+(* $Id: main.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 open StdLabels
 module Unix = UnixLabels
@@ -109,7 +109,7 @@ let _ =
            "points to the Objective Caml library."
            Config.standard_library)
   end;
-
+  
   Searchpos.view_defined_ref := (fun s ~env -> Viewer.view_defined s ~env);
   Searchpos.editor_ref := Editor.f;
 
@@ -118,7 +118,7 @@ let _ =
 
   (* bind top ~events:[`Destroy] ~action:(fun _ -> exit 0); *)
   at_exit Shell.kill_all;
-
+  
 
   if !st then Viewer.st_viewer ~on:top ()
   else Viewer.f ~on:top ();
@@ -127,6 +127,5 @@ let _ =
     try
       if is_win32 then mainLoop ()
       else Printexc.print mainLoop ()
-    with Protocol.TkError _ ->
-      if not is_win32 then flush stderr
+    with Protocol.TkError _ -> ()
   done

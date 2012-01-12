@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: includecore.ml 10458 2010-05-24 06:52:16Z garrigue $ *)
+(* $Id: includecore.ml 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Inclusion checks for the core language *)
 

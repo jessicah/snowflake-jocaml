@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: path.mli 5640 2003-07-01 13:05:43Z xleroy $ *)
+(* $Id: path.mli 7205 2005-10-27 16:29:22Z maranget $ *)
 
 (* Access paths *)
 
@@ -26,4 +26,6 @@ val binding_time: t -> int
 val nopos: int
 
 val name: t -> string
+    (* Return the print name, e.g., "F(X).M.foo" *)
+
 val head: t -> Ident.t

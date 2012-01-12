@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: fileselect.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: fileselect.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (* This file selecter works only under the OS with the full unix support.
    For the portability, Tk.getOpenFile and Tk.getSaveFile are recommended. *)

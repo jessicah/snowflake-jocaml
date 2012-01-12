@@ -10,7 +10,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile 4733 2002-04-24 09:09:35Z xleroy $
+# $Id: Makefile 7743 2006-11-17 15:58:38Z mandel $
 
 include ../config/Makefile
 
@@ -18,5 +18,5 @@ DIR=$(MANDIR)/man$(MANEXT)
 
 install:
 	for i in *.m; do cp $$i $(DIR)/`basename $$i .m`.$(MANEXT); done
-	echo '.so man$(MANEXT)/ocamlc.$(MANEXT)' > $(DIR)/ocamlc.opt.$(MANEXT)
-	echo '.so man$(MANEXT)/ocamlopt.$(MANEXT)' > $(DIR)/ocamlopt.opt.$(MANEXT)
+	echo '.so man$(MANEXT)/jocamlc.$(MANEXT)' > $(DIR)/jocamlc.opt.$(MANEXT)
+	echo '.so man$(MANEXT)/jocamlopt.$(MANEXT)' > $(DIR)/jocamlopt.opt.$(MANEXT)

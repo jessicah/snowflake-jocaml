@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: optcompile.ml 9153 2008-12-03 18:09:09Z doligez $ *)
+(* $Id: optcompile.ml 9322 2009-08-21 08:39:33Z maranget $ *)
 
 (* The batch compiler *)
 
@@ -30,7 +30,9 @@ let init_path () =
     then "+threads" :: !Clflags.include_dirs
     else !Clflags.include_dirs in
   let exp_dirs =
-    List.map (expand_directory Config.standard_library) dirs in
+    List.map
+      (expand_directory Config.standard_library Config.ocaml_library)
+      dirs in
   load_path := "" :: List.rev_append exp_dirs (Clflags.std_include_dir ());
   Env.reset_cache ()
 

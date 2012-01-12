@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: instruct.mli 9270 2009-05-20 11:52:42Z doligez $ *)
+(* $Id: instruct.mli 9322 2009-08-21 08:39:33Z maranget $ *)
 
 (* The type of the instructions of the abstract machine *)
 
@@ -36,7 +36,6 @@ type compilation_env =
 
 (* Debugging events *)
 
-(* Warning: when you change these types, check byterun/backtrace.c *)
 type debug_event =
   { mutable ev_pos: int;                (* Position in bytecode *)
     ev_module: string;                  (* Name of defining module *)

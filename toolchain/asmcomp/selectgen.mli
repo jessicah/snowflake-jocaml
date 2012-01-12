@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: selectgen.mli 10450 2010-05-21 12:00:49Z doligez $ *)
+(* $Id: selectgen.mli 10507 2010-06-04 19:16:58Z maranget $ *)
 
 (* Selection of pseudo-instructions, assignment of pseudo-registers,
    sequentialization. *)

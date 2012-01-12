@@ -14,7 +14,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: cltkCaml.c 9036 2008-09-26 07:35:24Z garrigue $ */
+/* $Id: cltkCaml.c 6336 2004-05-27 09:18:38Z maranget $ */
 
 #include <tcl.h>
 #include <tk.h>
@@ -28,8 +28,7 @@ value * tkerror_exn = NULL;
 value * handler_code = NULL;
 
 /* The Tcl command for evaluating callback in Caml */
-int CamlCBCmd(ClientData clientdata, Tcl_Interp *interp,
-              int argc, CONST84 char **argv)
+int CamlCBCmd(ClientData clientdata, Tcl_Interp *interp, int argc, char **argv)
 {
   CheckInit();
 
@@ -39,8 +38,7 @@ int CamlCBCmd(ClientData clientdata, Tcl_Interp *interp,
     int id;
     if (Tcl_GetInt(interp, argv[1], &id) != TCL_OK)
       return TCL_ERROR;
-    callback2(*handler_code,Val_int(id),
-              copy_string_list(argc - 2,(char **)&argv[2]));
+    callback2(*handler_code,Val_int(id),copy_string_list(argc - 2,&argv[2]));
     /* Never fails (Caml would have raised an exception) */
     /* but result may have been set by callback */
     return TCL_OK;

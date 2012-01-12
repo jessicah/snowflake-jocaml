@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: asmlink.ml 11049 2011-05-17 14:14:38Z doligez $ *)
+(* $Id: asmlink.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Link a set of .cmx/.o files and produce an executable *)
 
@@ -304,6 +304,9 @@ let link ppf objfiles output_name =
     if !Clflags.gprofile then "stdlib.p.cmxa" else "stdlib.cmxa" in
   let stdexit =
     if !Clflags.gprofile then "std_exit.p.cmx" else "std_exit.cmx" in
+  let objfiles =
+    if !Clflags.nojoin then objfiles
+    else "unix.cmxa" :: "threads.cmxa" :: "join.cmxa" :: objfiles in
   let objfiles =
     if !Clflags.nopervasives then objfiles
     else if !Clflags.output_c_object then stdlib :: objfiles

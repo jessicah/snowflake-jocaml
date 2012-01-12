@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: mytypes.mli 8232 2007-05-16 08:21:41Z doligez $ *)
+(* $Id: mytypes.mli 6336 2004-05-27 09:18:38Z maranget $ *)
 
 open Widget
 
@@ -23,7 +23,7 @@ type edit_window =
     modified: Textvariable.textVariable;
     mutable shell: (string * Shell.shell) option;
     mutable structure: Typedtree.structure;
-    mutable type_info: Stypes.annotation list;
+    mutable type_info: Stypes.type_info list;
     mutable signature: Types.signature;
     mutable psignature: Parsetree.signature;
     number: string }

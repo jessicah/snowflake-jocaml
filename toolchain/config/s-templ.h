@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: s-templ.h 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: s-templ.h 10503 2010-06-04 19:15:54Z maranget $ */
 
 /* Operating system and standard library dependencies. */
 

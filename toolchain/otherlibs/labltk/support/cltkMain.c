@@ -14,7 +14,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: cltkMain.c 10230 2010-04-03 06:43:51Z furuse $ */
+/* $Id: cltkMain.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <string.h>
 #include <tcl.h>
@@ -34,7 +34,7 @@
 #define R_OK 4
 #endif
 
-/*
+/* 
  * Dealing with signals: when a signal handler is defined in Caml,
  * the actual execution of the signal handler upon reception of the
  * signal is delayed until we are sure we are out of the GC.
@@ -122,7 +122,7 @@ CAMLprim value camltk_opentk(value argv)
           tmp = Field(tmp, 1);
           i++;
         }
-
+        
         sprintf( argcstr, "%d", argc );
         Tcl_SetVar(cltclinterp, "argc", argcstr, TCL_GLOBAL_ONLY);
         args = Tcl_Merge(argc, tkargv); /* args must be freed by Tcl_Free */
@@ -139,13 +139,13 @@ CAMLprim value camltk_opentk(value argv)
 
     if (NULL == cltk_mainWindow)
       tk_error(Tcl_GetStringResult(cltclinterp));
-
+  
     Tk_GeometryRequest(cltk_mainWindow,200,200);
   }
 
   /* Create the camlcallback command */
   Tcl_CreateCommand(cltclinterp,
-                    CAMLCB, CamlCBCmd,
+                    CAMLCB, CamlCBCmd, 
                     (ClientData)NULL,(Tcl_CmdDeleteProc *)NULL);
 
   /* This is required by "unknown" and thus autoload */
@@ -162,7 +162,7 @@ CAMLprim value camltk_opentk(value argv)
       strcat(f, home);
       strcat(f, "/");
       strcat(f, RCNAME);
-      if (0 == access(f,R_OK))
+      if (0 == access(f,R_OK)) 
         if (TCL_OK != Tcl_EvalFile(cltclinterp,f)) {
           stat_free(f);
           tk_error(Tcl_GetStringResult(cltclinterp));

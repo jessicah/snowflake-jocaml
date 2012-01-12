@@ -1,4 +1,3 @@
-\" $Id: ocamlrun.m 10444 2010-05-20 14:06:29Z doligez $
 
 .TH OCAMLRUN 1
 
@@ -8,15 +7,15 @@ ocamlrun \- The Objective Caml bytecode interpreter
 .SH SYNOPSIS
 .B ocamlrun
 [
-.I options
+.B \-v
 ]
 .I filename argument ...
 
 .SH DESCRIPTION
-The
+The 
 .BR ocamlrun (1)
 command executes bytecode files produced by the
-linking phase of the
+linking phase of the 
 .BR ocamlc (1)
 command.
 
@@ -24,25 +23,30 @@ The first non-option argument is taken to be the name of the file
 containing the executable bytecode. (That file is searched in the
 executable path as well as in the current directory.) The remaining
 arguments are passed to the Objective Caml program, in the string array
-.BR Sys.argv .
-Element 0 of this array is the name of the
-bytecode executable file; elements 1 to
+Sys.argv. Element 0 of this array is the name of the
+bytecode executable file; elements 1 to 
 .I n
 are the remaining arguments.
 
 In most cases, the bytecode
-executable files produced by the
+executable files produced by the 
 .BR ocamlc (1)
 command are self-executable,
-and manage to launch the
+and manage to launch the 
 .BR ocamlrun (1)
 command on themselves automatically.
 
 .SH OPTIONS
 
-The following command-line options are recognized by
+The following command-line option is recognized by 
 .BR ocamlrun (1).
+
 .TP
+<<<<<<< .courant
+.B \-v 
+When set, the memory manager prints verbose messages on standard error
+to signal garbage collections and heap extensions.
+=======
 .B \-b
 When the program aborts due to an uncaught exception, print a detailed
 "back trace" of the execution, showing where the exception was
@@ -76,61 +80,33 @@ Print version string and exit.
 .TP
 .B \-vnum
 Print short version number and exit.
+>>>>>>> .fusion-droit.r10497
 
 .SH ENVIRONMENT VARIABLES
 
 The following environment variable are also consulted:
-.TP
-.B CAML_LD_LIBRARY_PATH
-Additional directories to search for dynamically-loaded libraries.
-.TP
-.B OCAMLLIB
-The directory containing the Objective Caml standard
-library.  (If
-.B OCAMLLIB
-is not set,
-.B CAMLLIB
-will be used instead.) Used to locate the ld.conf configuration file for
-dynamic loading.  If not set,
-default to the library directory specified when compiling Objective Caml.
+
 .TP
 .B OCAMLRUNPARAM
-Set the runtime system options and garbage collection parameters.
-(If OCAMLRUNPARAM is not set, CAMLRUNPARAM will be used instead.)
+Set the garbage collection parameters.
+(If
+.B OCAMLRUNPARAM
+is not set,
+.B CAMLRUNPARAM
+will be used instead.)
 This variable must be a sequence of parameter specifications.
 A parameter specification is an option letter followed by an =
-sign, a decimal number (or a hexadecimal number prefixed by
-.BR 0x ),
-and an optional multiplier.  There are nine options, six of which
-correspond to the fields of the
-.B control
-record documented in
-.IR "The Objective Caml user's manual",
-chapter "Standard Library", section "Gc".
+sign, a decimal number, and an optional multiplier.  There are seven
+options:
 .TP
-.B b
-Trigger the printing of a stack backtrace
-when an uncaught exception aborts the program.
-This option takes no argument.
-.TP
-.B p
-Turn on debugging support for
-.BR ocamlyacc -generated
-parsers.  When this option is on,
-the pushdown automaton that executes the parsers prints a
-trace of its actions.  This option takes no argument.
-.TP
-.BR a \ (allocation_policy)
-The policy used for allocating in the OCaml heap.  Possible values
-are 0 for the next-fit policy, and 1 for the first-fit
-policy.  Next-fit is somewhat faster, but first-fit is better for
-avoiding fragmentation and the associated heap compactions.
+.BR b \ (backtrace)
+Print a stack backtrace in case of an uncaught exception.
 .TP
 .BR s \ (minor_heap_size)
-The size of the minor heap (in words).
+Size of the minor heap.
 .TP
 .BR i \ (major_heap_increment)
-The default size increment for the major heap (in words).
+Minimum size increment for the major heap.
 .TP
 .BR o \ (space_overhead)
 The major GC speed setting.
@@ -147,51 +123,48 @@ The initial size of the major heap (in words).
 .BR v \ (verbose)
 What GC messages to print to stderr.  This is a sum of values selected
 from the following:
-
-.B 0x001
+.TP
+.BR 1
 Start of major GC cycle.
-
-.B 0x002
+.TP
+.BR 2
 Minor collection and major GC slice.
-
-.B 0x004
+.TP
+.BR 4
 Growing and shrinking of the heap.
-
-.B 0x008
+.TP
+.BR 8
 Resizing of stacks and memory manager tables.
-
-.B 0x010
+.TP
+.BR 16
 Heap compaction.
-
-.BR 0x020
+.TP
+.BR 32
 Change of GC parameters.
-
-.BR 0x040
+.TP
+.BR 64
 Computation of major GC slice size.
-
-.BR 0x080
-Calling of finalisation functions.
-
-.BR 0x100
-Startup messages (loading the bytecode executable file, resolving
-shared libraries).
+.TP
+.BR 128
+Calling of finalisation function.
+.TP
+.BR 256
+Startup messages.
 
 The multiplier is
-.BR k ,
-.BR M \ or
-.BR G ,
-for multiplication by 2^10, 2^20, and 2^30 respectively.
+.B k
+,
+.B M
+, or
+.B G
+, for multiplication by 2^10, 2^20, and 2^30 respectively.
 For example, on a 32-bit machine under bash, the command
 .B export OCAMLRUNPARAM='s=256k,v=1'
 tells a subsequent
 .B ocamlrun
 to set its initial minor heap size to 1 megabyte and to print
 a message at the start of each major GC cycle.
-.TP
-.B CAMLRUNPARAM
-If OCAMLRUNPARAM is not found in the environment, then CAMLRUNPARAM
-will be used instead.  If CAMLRUNPARAM is not found, then the default
-values will be used.
+
 .TP
 .B PATH
 List of directories searched to find the bytecode executable file.
@@ -199,5 +172,5 @@ List of directories searched to find the bytecode executable file.
 .SH SEE ALSO
 .BR ocamlc (1).
 .br
-.IR "The Objective Caml user's manual" ,
+.I The Objective Caml user's manual,
 chapter "Runtime system".

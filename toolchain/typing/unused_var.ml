@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: unused_var.ml 11110 2011-07-04 21:15:01Z doligez $ *)
+(* $Id: unused_var.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 open Parsetree
 
@@ -87,6 +87,33 @@ let get_pel_vars pel =
   List.map (fun (p, _) -> get_vars ([], []) p) pel
 ;;
 
+(*>JOCAML*)
+
+let get_jpat_vars acc jpat =
+  let _, p =  jpat.pjpat_desc in
+  get_vars acc p
+
+let get_jpats_vars = List.fold_left get_jpat_vars
+
+let get_jpat_chan acc jpat =
+  let jident,_ = jpat.pjpat_desc in
+  let v = jident.pjident_desc in
+  if List.exists (fun (w,_,_) -> v = w) acc then
+    acc
+  else
+    (v, jident.pjident_loc, ref false)::acc
+
+let get_clause_chans acc cl =
+  let pats,_ = cl.pjclause_desc in
+  List.fold_left get_jpat_chan acc pats
+
+let get_def_chans acc d =
+  List.fold_left get_clause_chans acc d.pjauto_desc
+
+let get_defs_chans ds = List.fold_left get_def_chans [] ds
+
+(*<JOCAML*)
+
 let rec structure ppf tbl l =
   List.iter (structure_item ppf tbl) l
 
@@ -106,6 +133,10 @@ and structure_item ppf tbl s =
   | Pstr_class cdl -> List.iter (class_declaration ppf tbl) cdl;
   | Pstr_class_type _ -> ()
   | Pstr_include me -> module_expr ppf tbl me;
+(*>JOCAML*)
+  | Pstr_exn_global _ -> ()
+  | Pstr_def d -> join_defs ppf tbl d None
+(*<JOCAML*)
 
 and expression ppf tbl e =
   match e.pexp_desc with
@@ -173,6 +204,15 @@ and expression ppf tbl e =
   | Pexp_lazy e -> expression ppf tbl e;
   | Pexp_poly (e, _) -> expression ppf tbl e;
   | Pexp_object cs -> class_structure ppf tbl cs;
+(*>JOCAML*)
+  | Pexp_def (d,e) ->
+      join_defs ppf tbl d (Some (fun ppf tbl -> expression ppf tbl e))
+  | Pexp_reply (e, _) -> expression ppf tbl e
+  | Pexp_par (e1, e2) ->
+       expression ppf tbl e1 ;
+       expression ppf tbl e2
+  | Pexp_spawn e -> expression ppf tbl e
+(*<JOCAML*)
   | Pexp_newtype (_, e) -> expression ppf tbl e
   | Pexp_pack (me, _) -> module_expr ppf tbl me
   | Pexp_open (_, e) -> expression ppf tbl e
@@ -205,6 +245,30 @@ and let_pel ppf tbl recflag pel body =
           f ppf tbl;
           check_rm_let ppf tbl defined;
       end;
+
+(*>JOCAML*)
+and join_clause ppf tbl cl =
+  let jpats,e = cl.pjclause_desc in
+  let defined = get_jpats_vars ([],[]) jpats in
+  add_vars tbl defined ;
+  expression ppf tbl e ;
+  check_rm_vars ppf tbl defined
+
+and join_def ppf tbl d =
+  List.iter (join_clause ppf tbl) d.pjauto_desc
+
+and join_defs ppf tbl ds body =
+  let defined = (get_defs_chans ds,[]) in
+  add_vars tbl defined ;
+  List.iter (fun d -> join_def ppf tbl d)  ds ;
+  begin match body with
+  | None ->
+      rm_vars tbl defined
+  | Some f ->
+      f ppf tbl ;
+      check_rm_let ppf tbl [defined]
+  end
+(*<JOCAML*)
 
 and match_pel ppf tbl pel =
   List.iter (match_pe ppf tbl) pel

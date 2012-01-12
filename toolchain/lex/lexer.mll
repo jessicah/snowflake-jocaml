@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: lexer.mll 7307 2006-01-04 16:55:50Z doligez $ *)
+(* $Id: lexer.mll 8113 2007-03-23 09:01:11Z maranget $ *)
 
 (* The lexical analyzer for lexer definitions. Bootstrapped! *)
 

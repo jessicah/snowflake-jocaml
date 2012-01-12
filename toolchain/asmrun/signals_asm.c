@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: signals_asm.c 8768 2008-01-11 16:13:18Z doligez $ */
+/* $Id: signals_asm.c 9081 2008-10-14 07:37:28Z maranget $ */
 
 /* Signal handling, code specific to the native-code compiler */
 

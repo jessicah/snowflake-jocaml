@@ -10,14 +10,13 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: open.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: open.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <fcntl.h>
 #include <signal.h>
 #include "mlvalues.h"
 #include "fail.h"
 #include "libgraph.h"
-#include "callback.h"
 #include <windows.h>
 
 static value gr_reset(void);
@@ -304,7 +303,7 @@ CAMLprim value caml_gr_size_y(void)
 
 CAMLprim value caml_gr_resize_window (value vx, value vy)
 {
-  gr_check_open ();
+  caml_gr_check_open ();
 
   /* FIXME TODO implement this function... */
 
@@ -344,6 +343,7 @@ CAMLprim value caml_gr_sigio_handler(void)
 
 /* Processing of graphic errors */
 
+value * caml_named_value (char * name);
 static value * graphic_failure_exn = NULL;
 void gr_fail(char *fmt, char *arg)
 {

@@ -12,7 +12,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Compflags 10443 2010-05-20 09:44:25Z doligez $
+# $Id: Compflags 10510 2010-06-04 19:17:45Z maranget $
 
 case $1 in
   pervasives.cm[iox]|pervasives.p.cmx) echo ' -nopervasives';;

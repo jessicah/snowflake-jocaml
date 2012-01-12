@@ -12,7 +12,7 @@
 
 /* Based on public-domain code from Berkeley Yacc */
 
-/* $Id: error.c 6654 2004-11-02 10:48:14Z doligez $ */
+/* $Id: error.c 7205 2005-10-27 16:29:22Z maranget $ */
 
 /* routines for printing error messages  */
 

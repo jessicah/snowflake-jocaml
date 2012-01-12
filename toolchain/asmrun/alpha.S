@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: alpha.S 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: alpha.S 10522 2010-06-04 19:20:20Z maranget $ */
 
 /* Asm part of the runtime system, Alpha processor */
 

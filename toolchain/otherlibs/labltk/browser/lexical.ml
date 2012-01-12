@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: lexical.ml 9319 2009-07-20 11:51:50Z doligez $ *)
+(* $Id: lexical.ml 8066 2007-03-13 16:33:21Z mandel $ *)
 
 open StdLabels
 open Tk
@@ -39,8 +39,6 @@ let tag ?(start=tstart) ?(stop=tend) tw =
   let tpos c = (Text.index tw ~index:start, [`Char c]) in
   let text = Text.get tw ~start ~stop in
   let buffer = Lexing.from_string text in
-  Location.init buffer "";
-  Location.input_name := "";
   List.iter tags
     ~f:(fun tag -> Text.tag_remove tw ~start ~stop ~tag);
   let last = ref (EOF, 0, 0) in
@@ -62,6 +60,10 @@ let tag ?(start=tstart) ?(stop=tend) tw =
       | LAZY
       | MATCH
       | OR
+(*> JOCAML *)
+      | REPLY
+      | SPAWN
+(*< JOCAML *)
       | THEN
       | TO
       | TRY
@@ -74,6 +76,9 @@ let tag ?(start=tstart) ?(stop=tend) tw =
       | BAR
       | CLASS
       | CONSTRAINT
+(*> JOCAML *)
+      | DEF
+(*< JOCAML *)
       | EXCEPTION
       | EXTERNAL
       | FUN

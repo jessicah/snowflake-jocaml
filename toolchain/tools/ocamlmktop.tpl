@@ -11,6 +11,6 @@
 #                                                                       #
 #########################################################################
 
-# $Id: ocamlmktop.tpl 10443 2010-05-20 09:44:25Z doligez $
+# $Id: ocamlmktop.tpl 10514 2010-06-04 19:18:21Z maranget $
 
-exec %%BINDIR%%/ocamlc -linkall toplevellib.cma "$@" topstart.cmo
+exec %%BINDIR%%/jocamlc -linkall toplevellib.cma "$@" topstart.cmo

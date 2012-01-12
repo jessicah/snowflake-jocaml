@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: output.ml 10713 2010-10-08 11:53:19Z doligez $ *)
+(* $Id: output.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Generating a DFA as a set of mutually recursive functions *)
 

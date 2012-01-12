@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: bng_sparc.c 5880 2003-10-24 09:18:01Z xleroy $ */
+/* $Id: bng_sparc.c 6336 2004-05-27 09:18:38Z maranget $ */
 
 /* Code specific to the SPARC (V8 and above) architecture. */
 

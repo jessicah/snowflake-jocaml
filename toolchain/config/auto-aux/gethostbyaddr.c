@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: gethostbyaddr.c 4771 2002-05-06 08:29:52Z xleroy $ */
+/* $Id: gethostbyaddr.c 6336 2004-05-27 09:18:38Z maranget $ */
 
 #ifndef _REENTRANT
 /* This helps detection on Digital Unix... */

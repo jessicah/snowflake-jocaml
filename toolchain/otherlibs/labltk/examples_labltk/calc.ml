@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: calc.ml 5175 2002-10-11 19:01:19Z doligez $ *)
+(* $Id: calc.ml 6336 2004-05-27 09:18:38Z maranget $ *)
 
 (* A simple calculator demonstrating OO programming with O'Labl
    and LablTk.

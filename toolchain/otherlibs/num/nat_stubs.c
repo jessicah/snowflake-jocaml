@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: nat_stubs.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: nat_stubs.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include "alloc.h"
 #include "config.h"
@@ -84,17 +84,6 @@ CAMLprim value nth_digit_nat(value nat, value ofs)
   return Val_long(Digit_val(nat, Long_val(ofs)));
 }
 
-CAMLprim value set_digit_nat_native(value nat, value ofs, value digit)
-{
-  Digit_val(nat, Long_val(ofs)) = Nativeint_val(digit);
-  return Val_unit;
-}
-
-CAMLprim value nth_digit_nat_native(value nat, value ofs)
-{
-  return caml_copy_nativeint(Digit_val(nat, Long_val(ofs)));
-}
-
 CAMLprim value num_digits_nat(value nat, value ofs, value len)
 {
   return Val_long(bng_num_digits(&Digit_val(nat, Long_val(ofs)),
@@ -120,7 +109,7 @@ CAMLprim value is_digit_zero(value nat, value ofs)
 CAMLprim value is_digit_normalized(value nat, value ofs)
 {
   return
-    Val_bool(Digit_val(nat, Long_val(ofs)) & ((bngdigit)1 << (BNG_BITS_PER_DIGIT-1)));
+    Val_bool(Digit_val(nat, Long_val(ofs)) & (1L << (BNG_BITS_PER_DIGIT-1)));
 }
 
 CAMLprim value is_digit_odd(value nat, value ofs)
@@ -341,7 +330,7 @@ static void serialize_nat(value nat,
 
 #ifdef ARCH_SIXTYFOUR
   len = len * 2; /* two 32-bit words per 64-bit digit  */
-  if (len >= ((mlsize_t)1 << 32))
+  if (len >= (1L << 32))
     failwith("output_value: nat too big");
 #endif
   serialize_int_4((int32) len);
@@ -368,24 +357,14 @@ static uintnat deserialize_nat(void * dst)
 #if defined(ARCH_SIXTYFOUR) && defined(ARCH_BIG_ENDIAN)
   { uint32 * p;
     mlsize_t i;
-    for (i = len, p = dst; i > 1; i -= 2, p += 2) {
+    for (i = len, p = dst; i > 0; i -= 2, p += 2) {
       p[1] = deserialize_uint_4();   /* low 32 bits of 64-bit digit */
       p[0] = deserialize_uint_4();   /* high 32 bits of 64-bit digit */
-    }
-    if (i > 0){
-      p[1] = deserialize_uint_4();   /* low 32 bits of 64-bit digit */
-      p[0] = 0;                      /* high 32 bits of 64-bit digit */
-      ++ len;
     }
   }
 #else
   deserialize_block_4(dst, len);
-#if defined(ARCH_SIXTYFOUR)
-  if (len & 1){
-    ((uint32 *) dst)[len] = 0;
-    ++ len;
-  }
-#endif
 #endif
   return len * 4;
 }
+

@@ -1,0 +1,52 @@
+JoCaml 3.12.1
+-------------
+- Follow ocaml release.
+- JoinPool bug: nagain was decremented twice!
+
+JoCaml 3.12.0
+-------------
+- Corrected bug in typing : arguments of join-patterns must
+  get unified, channel per channel, before compiling algebraic
+  patterns in join-patterns. Reason: the compilation assumes
+  that patterns are type-correct.
+
+- Added new librairy JoinTextProc
+
+- Corrected subtle threading bug in JoinProc: fork & parent channels
+  closing in critical section.
+ 
+- Added new librairy JoinCom [producer/consumers, previously in JoinFifo]
+
+- Added new librairies JoinHelper, JoinPool and JoinProc (replacement
+  for Unix fork/exec helpers, which are not thread safe at all)
+
+- Corrected incorrect handling of channel names in object bodies. Costly
+  (bug #1, rev 10200)
+
+JoCaml 3.11.2.A
+---------------
+- Unfortunate bug in lex/Makefile [and forgot bootstrap]
+
+JoCaml 3.11.2
+-------------
+- Follow ocaml release
+
+JoCaml 3.11.1
+-------------
+
+- Corrected bug in installation (all tools now installed with 'jo' prefix)
+
+JoCaml 3.11.0:
+-------------
+
+- Several alteration of scheduling, so as to
+  limit pending signals, <= threads in pool and <= tasks in pool.
+ 
+- Added 'JoinFifo' and 'JoinCount' in standard library.
+
+
+JoCaml 3.10.0:
+--------------
+Initial release
+
+$Id: Changes_JoCaml 11113 2011-07-07 14:32:00Z maranget $

@@ -11,7 +11,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile 8490 2007-11-08 09:23:06Z frisch $
+# $Id: Makefile 9081 2008-10-14 07:37:28Z maranget $
 
 # Makefile for the portable graphics library
 

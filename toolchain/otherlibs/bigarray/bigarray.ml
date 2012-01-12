@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: bigarray.ml 8911 2008-07-14 09:09:53Z xleroy $ *)
+(* $Id: bigarray.ml 8113 2007-03-23 09:01:11Z maranget $ *)
 
 (* Module [Bigarray]: large, multi-dimensional, numerical arrays *)
 
@@ -107,8 +107,6 @@ module Array1 = struct
     Genarray.create kind layout [|dim|]
   external get: ('a, 'b, 'c) t -> int -> 'a = "%caml_ba_ref_1"
   external set: ('a, 'b, 'c) t -> int -> 'a -> unit = "%caml_ba_set_1"
-  external unsafe_get: ('a, 'b, 'c) t -> int -> 'a = "%caml_ba_unsafe_ref_1"
-  external unsafe_set: ('a, 'b, 'c) t -> int -> 'a -> unit = "%caml_ba_unsafe_set_1"
   let dim a = Genarray.nth_dim a 0
   external kind: ('a, 'b, 'c) t -> ('a, 'b) kind = "caml_ba_kind"
   external layout: ('a, 'b, 'c) t -> 'c layout = "caml_ba_layout"
@@ -118,7 +116,7 @@ module Array1 = struct
   let of_array kind layout data =
     let ba = create kind layout (Array.length data) in
     let ofs = if layout = c_layout then 0 else 1 in
-    for i = 0 to Array.length data - 1 do unsafe_set ba (i + ofs) data.(i) done;
+    for i = 0 to Array.length data - 1 do set ba (i + ofs) data.(i) done;
     ba
   let map_file fd ?pos kind layout shared dim =
     Genarray.map_file fd ?pos kind layout shared [|dim|]
@@ -130,8 +128,6 @@ module Array2 = struct
     Genarray.create kind layout [|dim1; dim2|]
   external get: ('a, 'b, 'c) t -> int -> int -> 'a = "%caml_ba_ref_2"
   external set: ('a, 'b, 'c) t -> int -> int -> 'a -> unit = "%caml_ba_set_2"
-  external unsafe_get: ('a, 'b, 'c) t -> int -> int -> 'a = "%caml_ba_unsafe_ref_2"
-  external unsafe_set: ('a, 'b, 'c) t -> int -> int -> 'a -> unit = "%caml_ba_unsafe_set_2"
   let dim1 a = Genarray.nth_dim a 0
   let dim2 a = Genarray.nth_dim a 1
   external kind: ('a, 'b, 'c) t -> ('a, 'b) kind = "caml_ba_kind"
@@ -155,7 +151,7 @@ module Array2 = struct
       if Array.length row <> dim2 then
         invalid_arg("Bigarray.Array2.of_array: non-rectangular data");
       for j = 0 to dim2 - 1 do
-        unsafe_set ba (i + ofs) (j + ofs) row.(j)
+        set ba (i + ofs) (j + ofs) row.(j)
       done
     done;
     ba
@@ -170,8 +166,6 @@ module Array3 = struct
   external get: ('a, 'b, 'c) t -> int -> int -> int -> 'a = "%caml_ba_ref_3"
   external set: ('a, 'b, 'c) t -> int -> int -> int -> 'a -> unit
     = "%caml_ba_set_3"
-  external unsafe_get: ('a, 'b, 'c) t -> int -> int -> int -> 'a = "%caml_ba_unsafe_ref_3"
-  external unsafe_set: ('a, 'b, 'c) t -> int -> int -> int -> 'a -> unit = "%caml_ba_unsafe_set_3"
   let dim1 a = Genarray.nth_dim a 0
   let dim2 a = Genarray.nth_dim a 1
   let dim3 a = Genarray.nth_dim a 2
@@ -203,7 +197,7 @@ module Array3 = struct
         if Array.length col <> dim3 then
           invalid_arg("Bigarray.Array3.of_array: non-cubic data");
         for k = 0 to dim3 - 1 do
-          unsafe_set ba (i + ofs) (j + ofs) (k + ofs) col.(k)
+          set ba (i + ofs) (j + ofs) (k + ofs) col.(k)
         done
       done
     done;
@@ -244,10 +238,3 @@ let _ =
   let _ = Array2.get in
   let _ = Array3.get in
   ()
-
-external get1: unit -> unit = "caml_ba_get_1"
-external get2: unit -> unit = "caml_ba_get_2"
-external get3: unit -> unit = "caml_ba_get_3"
-external set1: unit -> unit = "caml_ba_set_1"
-external set2: unit -> unit = "caml_ba_set_2"
-external set3: unit -> unit = "caml_ba_set_3"

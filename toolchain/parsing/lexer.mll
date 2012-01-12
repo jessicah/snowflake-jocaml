@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: lexer.mll 10250 2010-04-08 03:58:41Z garrigue $ *)
+(* $Id: lexer.mll 10518 2010-06-04 19:19:28Z maranget $ *)
 
 (* The lexer definition *)
 
@@ -93,6 +93,16 @@ let keyword_table =
     "lsr", INFIXOP4("lsr");
     "asr", INFIXOP4("asr")
 ]
+
+let join_keyword_table =
+  let h = Hashtbl.copy keyword_table in
+  Hashtbl.add h "def" DEF;
+  Hashtbl.add h "spawn" SPAWN;
+  Hashtbl.add h "reply" REPLY;
+  h
+
+let keywords () =
+  if not !Clflags.nojoin then join_keyword_table else keyword_table
 
 (* To buffer string literals *)
 
@@ -255,7 +265,7 @@ rule token = parse
   | "~" lowercase identchar * ':'
       { let s = Lexing.lexeme lexbuf in
         let name = String.sub s 1 (String.length s - 2) in
-        if Hashtbl.mem keyword_table name then
+        if Hashtbl.mem (keywords ()) name then
           raise (Error(Keyword_as_label name, Location.curr lexbuf));
         LABEL name }
   | "?"  { QUESTION }
@@ -263,13 +273,13 @@ rule token = parse
   | "?" lowercase identchar * ':'
       { let s = Lexing.lexeme lexbuf in
         let name = String.sub s 1 (String.length s - 2) in
-        if Hashtbl.mem keyword_table name then
+        if Hashtbl.mem (keywords ()) name then
           raise (Error(Keyword_as_label name, Location.curr lexbuf));
         OPTLABEL name }
   | lowercase identchar *
       { let s = Lexing.lexeme lexbuf in
           try
-            Hashtbl.find keyword_table s
+            Hashtbl.find (keywords ()) s
           with Not_found ->
             LIDENT s }
   | uppercase identchar *

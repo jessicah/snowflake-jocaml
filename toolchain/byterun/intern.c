@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: intern.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: intern.c 10505 2010-06-04 19:16:46Z maranget $ */
 
 /* Structured input, compact format */
 
@@ -111,6 +111,10 @@ static void intern_cleanup(void)
   }
 }
 
+void caml_intern_cleanup(void) {
+  intern_cleanup() ;
+}
+
 static void intern_rec(value *dest)
 {
   unsigned int code;
@@ -162,6 +166,7 @@ static void intern_rec(value *dest)
       Byte(v, ofs_ind) = ofs_ind - len;
       readblock(String_val(v), len);
     } else {
+      tag_t custom_tag ;
       switch(code) {
       case CODE_INT8:
         v = Val_long(read8s());
@@ -295,12 +300,40 @@ static void intern_rec(value *dest)
         }
         v = (value) (caml_code_area_start + ofs);
         break;
+        /*>JOCAML*/
+      case CODE_SAVEDCODE:
+        ofs = read8u() ;
+        v = (value)caml_get_saved_code(ofs) ;
+        if (v == (value)NULL) {
+          intern_cleanup() ;
+          caml_failwith("input_value: no code saved");
+        }
+        /* Saved code values are not shared */           
+        break ;
+      case CODE_SAVEDVALUE:
+        ofs = read8u() ;
+        v = caml_get_saved_value(ofs) ;
+        if (v == (value)NULL) {
+          intern_cleanup() ;
+          caml_failwith("input_value: no value saved");
+        }
+        /* Beware of saved values in minor heap ! */
+	caml_initialize(dest, v) ;
+	return ;
+        /*<JOCAML*/
       case CODE_INFIXPOINTER:
         ofs = read32u();
         intern_rec(&clos);
         v = clos + ofs;
         break;
       case CODE_CUSTOM:
+        /*>JOCAML*/
+        custom_tag = Custom_tag ;
+        goto custom;
+      case CODE_JOCUSTOM:
+        custom_tag = JoCustom_tag ;
+      custom:
+        /*<JOCAML*/
         ops = caml_find_custom_operations((char *) intern_src);
         if (ops == NULL) {
           intern_cleanup();
@@ -311,7 +344,7 @@ static void intern_rec(value *dest)
         size = 1 + (size + sizeof(value) - 1) / sizeof(value);
         v = Val_hp(intern_dest);
         if (intern_obj_table != NULL) intern_obj_table[obj_counter++] = v;
-        *intern_dest = Make_header(size, Custom_tag, intern_color);
+        *intern_dest = Make_header(size, custom_tag, intern_color);
         Custom_ops_val(v) = ops;
         intern_dest += 1 + size;
         break;

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: oprint.ml 11051 2011-05-18 15:01:07Z xclerc $ *)
+(* $Id: oprint.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 open Format
 open Outcometree
@@ -213,6 +213,7 @@ and print_simple_out_type ppf =
   | Otyp_alias _ | Otyp_poly _ | Otyp_arrow _ | Otyp_tuple _ as ty ->
       fprintf ppf "@[<1>(%a)@]" print_out_type ty
   | Otyp_abstract | Otyp_sum _ | Otyp_record _ | Otyp_manifest (_, _) -> ()
+  | Otyp_proc -> ()
   | Otyp_module (p, n, tyl) ->
       fprintf ppf "@[<1>(module %s" p;
       let first = ref true in
@@ -223,6 +224,8 @@ and print_simple_out_type ppf =
         )
         n tyl;
       fprintf ppf ")@]"
+
+
 and print_fields rest ppf =
   function
     [] ->

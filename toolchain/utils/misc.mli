@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: misc.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: misc.mli 10513 2010-06-04 19:18:10Z maranget $ *)
 
 (* Miscellaneous useful types and functions *)
 
@@ -50,9 +50,9 @@ val find_in_path_uncap: string list -> string -> string
            to match. *)
 val remove_file: string -> unit
         (* Delete the given file if it exists. Never raise an error. *)
-val expand_directory: string -> string -> string
-        (* [expand_directory alt file] eventually expands a [+] at the
-           beginning of file into [alt] (an alternate root directory) *)
+val expand_directory: string -> string option -> string -> string
+        (* [expand_directory alt alt2 file] eventually expands a [+] at the
+           beginning of file into [alt] or [alt2] (alternate root directories) *)
 
 val create_hashtable: int -> ('a * 'b) list -> ('a, 'b) Hashtbl.t
         (* Create a hashtable of the given size and fills it with the

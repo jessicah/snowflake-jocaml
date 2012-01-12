@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: predef.ml 10288 2010-04-21 08:13:10Z xleroy $ *)
+(* $Id: predef.ml 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Predefined type constructors (with special typing rules in typecore) *)
 
@@ -65,6 +65,9 @@ and type_nativeint = newgenty (Tconstr(path_nativeint, [], ref Mnil))
 and type_int32 = newgenty (Tconstr(path_int32, [], ref Mnil))
 and type_int64 = newgenty (Tconstr(path_int64, [], ref Mnil))
 and type_lazy_t t = newgenty (Tconstr(path_lazy_t, [t], ref Mnil))
+(*>JOCAML*)
+and type_process kids = newgenty (Tproc kids)
+(*<JOCAML*)
 
 let ident_match_failure = Ident.create_predef_exn "Match_failure"
 and ident_out_of_memory = Ident.create_predef_exn "Out_of_memory"
@@ -192,7 +195,11 @@ let build_initial_env add_type add_exception empty_env =
   add_type ident_string decl_abstr (
   add_type ident_char decl_abstr (
   add_type ident_int decl_abstr (
-    empty_env)))))))))))))))))))))))))))
+    empty_env)))))))))))))))))))))))))
+(*> JOCAML *)
+    ))
+(*< JOCAML *)
+
 
 let builtin_values =
   List.map (fun id -> Ident.make_global id; (Ident.name id, id))

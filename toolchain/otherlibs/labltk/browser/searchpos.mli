@@ -12,7 +12,7 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: searchpos.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: searchpos.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
 open Widget
 
@@ -67,7 +67,7 @@ val search_pos_structure :
     pos:int -> Typedtree.structure_item list ->
     (fkind * Env.t * Location.t) list
 val search_pos_info :
-    pos:int -> Stypes.annotation list -> (fkind * Env.t * Location.t) list
+    pos:int -> Stypes.type_info list -> (fkind * Env.t * Location.t) list
 val view_type : fkind -> env:Env.t -> unit
 val view_type_menu : fkind -> env:Env.t -> parent:'a widget -> menu widget
 

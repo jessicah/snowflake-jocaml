@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: consistbl.mli 5275 2002-11-18 10:41:26Z xleroy $ *)
+(* $Id: consistbl.mli 7201 2005-10-27 12:05:38Z maranget $ *)
 
 (* Consistency tables: for checking consistency of module CRCs *)
 

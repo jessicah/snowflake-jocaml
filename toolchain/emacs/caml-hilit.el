@@ -10,7 +10,7 @@
 ;(*                                                                     *)
 ;(***********************************************************************)
 
-;(* $Id: caml-hilit.el 6612 2004-08-20 17:04:35Z doligez $ *)
+;(* $Id: caml-hilit.el 8746 2008-01-03 15:51:07Z maranget $ *)
 
 ; Highlighting patterns for hilit19 under caml-mode
 
@@ -37,10 +37,10 @@
    '("`?\\<[A-Z][A-Za-z0-9_\']*\\>" nil MidnightBlue)
 ;definition
    (list (concat
-          "\\<\\(a\\(nd\\|s\\)\\|c\\(onstraint\\|lass\\)"
+          "\\<\\(a\\(nd\\|s\\)\\|def\\|c\\(onstraint\\|lass\\)"
           "\\|ex\\(ception\\|ternal\\)\\|fun\\(ct\\(ion\\|or\\)\\)?"
           "\\|in\\(herit\\)?\\|let\\|m\\(ethod\\|utable\\|odule\\)"
-          "\\|of\\|p\\(arser\\|rivate\\)\\|rec\\|type"
+          "\\|o\\(f\\|r\\)\\|p\\(arser\\|rivate\\)\\|rec\\|type"
           "\\|v\\(al\\|irtual\\)\\)\\>")
          nil 'ForestGreen)
 ;blocking
@@ -48,7 +48,7 @@
 ;control
    (list (concat
           "\\<\\(do\\(ne\\|wnto\\)?\\|else\\|for\\|i\\(f\\|gnore\\)"
-          "\\|lazy\\|match\\|new\\|or\\|t\\(hen\\|o\\|ry\\)"
+          "\\|lazy\\|match\\|new\\|spawn\\|t\\(hen\\|o\\|ry\\)"
           "\\|w\\(h\\(en\\|ile\\)\\|ith\\)\\)\\>"
           "\\|\|\\|->\\|&\\|#")
          nil 'keyword)

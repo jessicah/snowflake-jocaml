@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: config.mli 10424 2010-05-19 11:29:38Z xleroy $ *)
+(* $Id: config.mli 10513 2010-06-04 19:18:10Z maranget $ *)
 
 (* System configuration *)
 
@@ -19,6 +19,10 @@ val version: string
 
 val standard_library: string
         (* The directory containing the standard libraries *)
+val ocaml_library : string option
+        (*  The directory containing the standard libraries of ocaml,
+            or None if no companion ocaml *)
+
 val standard_runtime: string
         (* The full path to the standard bytecode interpreter ocamlrun *)
 val ccomp_type: string

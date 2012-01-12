@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ocamlprof.ml 10444 2010-05-20 14:06:29Z doligez $ *)
+(* $Id: ocamlprof.ml 10514 2010-06-04 19:18:21Z maranget $ *)
 
 open Printf
 
@@ -277,6 +277,12 @@ and rw_exp iflag sexp =
 
   | Pexp_assert (cond) -> rewrite_exp iflag cond
   | Pexp_assertfalse -> ()
+(*> JOCAML *)
+  |Pexp_def (_, _)|Pexp_reply (_, _)|Pexp_par (_, _)
+  |Pexp_spawn _
+    ->
+      assert false (* No profiling in jocaml *)
+(*< JOCAML *)
 
   | Pexp_lazy (expr) -> rewrite_exp iflag expr
 

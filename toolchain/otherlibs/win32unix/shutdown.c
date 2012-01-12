@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: shutdown.c 4765 2002-04-30 15:00:48Z xleroy $ */
+/* $Id: shutdown.c 6336 2004-05-27 09:18:38Z maranget $ */
 
 #include <mlvalues.h>
 #include "unixsupport.h"

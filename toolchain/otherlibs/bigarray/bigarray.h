@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: bigarray.h 9153 2008-12-03 18:09:09Z doligez $ */
+/* $Id: bigarray.h 8113 2007-03-23 09:01:11Z maranget $ */
 
 #ifndef CAML_BIGARRAY_H
 #define CAML_BIGARRAY_H
@@ -90,6 +90,5 @@ CAMLBAextern value
     caml_ba_alloc(int flags, int num_dims, void * data, intnat * dim);
 CAMLBAextern value caml_ba_alloc_dims(int flags, int num_dims, void * data,
                                  ... /*dimensions, with type intnat */);
-CAMLBAextern uintnat caml_ba_byte_size(struct caml_ba_array * b);
 
 #endif

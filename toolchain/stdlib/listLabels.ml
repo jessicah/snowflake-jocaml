@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: listLabels.ml 4144 2001-12-07 13:41:02Z xleroy $ *)
+(* $Id: listLabels.ml 7198 2005-10-27 11:22:54Z maranget $ *)
 
 (* Module [ListLabels]: labelled List module *)
 

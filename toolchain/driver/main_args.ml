@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: main_args.ml 10621 2010-07-06 14:05:26Z maranget $ *)
+(* $Id: main_args.ml 10634 2010-07-26 09:02:43Z maranget $ *)
 
 let mk_a f =
   "-a", Arg.Unit f, " Build a library"
@@ -140,6 +140,10 @@ let mk_no_app_funct f =
 
 let mk_noassert f =
   "-noassert", Arg.Unit f, " Do not compile assertion checks"
+;;
+
+let mk_nojoin f =
+  "-nojoin", Arg.Unit f, " Act as OCaml"
 ;;
 
 let mk_noautolink_byt f =
@@ -394,6 +398,7 @@ module type Bytecomp_options = sig
   val _no_app_funct : unit -> unit
   val _noassert : unit -> unit
   val _noautolink : unit -> unit
+  val _nojoin : unit -> unit
   val _nolabels : unit -> unit
   val _nostdlib : unit -> unit
   val _o : string -> unit
@@ -476,6 +481,7 @@ module type Optcomp_options = sig
   val _noassert : unit -> unit
   val _noautolink : unit -> unit
   val _nodynlink : unit -> unit
+  val _nojoin : unit -> unit
   val _nolabels : unit -> unit
   val _nostdlib : unit -> unit
   val _o : string -> unit
@@ -595,6 +601,7 @@ struct
     mk_modern F._labels;
     mk_no_app_funct F._no_app_funct;
     mk_noassert F._noassert;
+    mk_nojoin F._nojoin;
     mk_noautolink_byt F._noautolink;
     mk_nolabels F._nolabels;
     mk_nostdlib F._nostdlib;
@@ -618,7 +625,6 @@ struct
     mk_warn_error F._warn_error;
     mk_warn_help F._warn_help;
     mk_where F._where;
-
     mk_nopervasives F._nopervasives;
     mk_use_prims F._use_prims;
     mk_dparsetree F._dparsetree;
@@ -684,6 +690,7 @@ struct
     mk_linkall F._linkall;
     mk_no_app_funct F._no_app_funct;
     mk_noassert F._noassert;
+    mk_nojoin F._nojoin;
     mk_noautolink_opt F._noautolink;
     mk_nodynlink F._nodynlink;
     mk_nolabels F._nolabels;

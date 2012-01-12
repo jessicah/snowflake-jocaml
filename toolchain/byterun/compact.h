@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: compact.h 6044 2003-12-31 14:20:40Z doligez $ */
+/* $Id: compact.h 7192 2005-10-27 09:14:16Z maranget $ */
 
 #ifndef CAML_COMPACT_H
 #define CAML_COMPACT_H

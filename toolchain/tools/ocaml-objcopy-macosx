@@ -12,7 +12,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: ocaml-objcopy-macosx 7307 2006-01-04 16:55:50Z doligez $
+# $Id: ocaml-objcopy-macosx 8113 2007-03-23 09:01:11Z maranget $
 
 
 TMP="${TMPDIR=/tmp}"

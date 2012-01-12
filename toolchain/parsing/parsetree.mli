@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: parsetree.mli 10263 2010-04-17 14:45:12Z garrigue $ *)
+(* $Id: parsetree.mli 10518 2010-06-04 19:19:28Z maranget $ *)
 
 (* Abstract syntax tree produced by parsing *)
 
@@ -118,6 +118,29 @@ and expression_desc =
   | Pexp_newtype of string * expression
   | Pexp_pack of module_expr * package_type
   | Pexp_open of Longident.t * expression
+(*> JOCAML *)
+  | Pexp_spawn of expression
+  | Pexp_par of expression * expression
+  | Pexp_reply of expression * joinident
+  | Pexp_def of joinautomaton list * expression
+
+and joinautomaton =
+ {pjauto_desc : joinclause list ;
+  pjauto_loc : Location.t}
+
+and joinclause =
+    {pjclause_desc : joinpattern list * expression ;
+    pjclause_loc : Location.t}
+
+and joinpattern =
+  { pjpat_desc: joinpattern_desc;
+    pjpat_loc: Location.t}
+
+and joinident = {pjident_desc : string ; pjident_loc : Location.t}
+
+and joinpattern_desc =  joinident * pattern
+
+(*< JOCAML *)
 
 (* Value descriptions *)
 
@@ -271,6 +294,10 @@ and structure_item_desc =
   | Pstr_class of class_declaration list
   | Pstr_class_type of class_type_declaration list
   | Pstr_include of module_expr
+(*> JOCAML *)
+  | Pstr_def of joinautomaton list
+  | Pstr_exn_global of Longident.t
+(*< JOCAML *)
 
 (* Toplevel phrases *)
 

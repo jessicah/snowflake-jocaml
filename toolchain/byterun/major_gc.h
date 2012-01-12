@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: major_gc.h 10843 2010-11-22 15:32:07Z doligez $ */
+/* $Id: major_gc.h 11113 2011-07-07 14:32:00Z maranget $ */
 
 #ifndef CAML_MAJOR_GC_H
 #define CAML_MAJOR_GC_H

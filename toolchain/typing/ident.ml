@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ident.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: ident.ml 10508 2010-06-04 19:17:06Z maranget $ *)
 
 open Format
 
@@ -182,3 +182,9 @@ let rec keys_aux stack accu = function
       keys_aux (l :: stack) (k.ident :: accu) r
 
 let keys tbl = keys_aux [] [] tbl
+
+let rec map f = function
+  | Empty -> Empty
+  | Node (l, k, r, h) ->
+      Node (map f l, { k with data = f k.data ; }, map f r, h)
+

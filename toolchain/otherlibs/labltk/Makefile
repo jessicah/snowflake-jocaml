@@ -30,9 +30,7 @@ allopt:
 byte: all
 opt: allopt
 
-.PHONY: all allopt byte opt
-.PHONY: labltk camltk examples examples_labltk examples_camltk
-.PHONY: install installopt partialclean clean depend
+.PHONY: labltk camltk examples_labltk examples_camltk
 
 labltk: Widgets.src
 	compiler/tkcompiler -outdir labltk

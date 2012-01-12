@@ -1,9 +1,5 @@
-2005-12-20:
------------
-* Add Protocol.do_one_event and Protocol.do_pending.
+version 1.0a1
 
-2002-05-03:
------------
 General Changes
 * Merging CamlTk and LablTk API interfaces
 * Activate and Deactivate Events are added

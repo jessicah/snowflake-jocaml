@@ -12,35 +12,30 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: tkthread.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: tkthread.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
-(* Helper functions for using LablTk with threads.
-   To use, add tkthread.cmo or tkthread.cmx to your command line *)
+(* Basic functions *)
 
 (** Start the main loop in a new GUI thread. Do not use recursively. *)
 val start : unit -> Thread.t
-(** The actual function executed in the GUI thread *)
+(** The actual function executed in the new thread *)
 val thread_main : unit -> unit
 (** The toplevel widget (an alias of [Widget.default_toplevel]) *)
 val top : Widget.toplevel Widget.widget
 
 (* Jobs are needed for Windows, as you cannot do GUI work from
-   another thread. This is apparently true on OSX/Aqua too.
-   And even using X11 some calls need to come from the main thread.
+   another thread.
+   Even under Unix some calls need to come from the main thread.
    The basic idea is to either use async (if you don't need a result)
    or sync whenever you call a Tk related function from another thread
    (for instance with the threaded toplevel).
    With sync, beware of deadlocks!
 *)
 
-(** Add an asynchronous job (to do in the GUI thread) *)
+(** Add an asynchronous job (to do in the main thread) *)
 val async : ('a -> unit) -> 'a -> unit
-(** Add a synchronous job (to do in the GUI thread).
-    Raise [Failure "Tkthread.sync"] if there is no such thread. *)
+(** Add a synchronous job (to do in the main thread) *)
 val sync : ('a -> 'b) -> 'a -> 'b
-(** Whether the current thread is the GUI thread.
-    Note that when using X11 it is generally safe to call
-    most Tk functions from other threads too. *)
+(** Whether it is safe to call most Tk functions directly from
+    the current thread *)
 val gui_safe : unit -> bool
-(** Whether a GUI thread is running *)
-val running : unit -> bool

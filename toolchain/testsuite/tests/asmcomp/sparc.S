@@ -10,7 +10,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: sparc.S 10713 2010-10-08 11:53:19Z doligez $ */
+/* $Id: sparc.S 11113 2011-07-07 14:32:00Z maranget $ */
 
 #ifndef SYS_solaris
 #define Call_gen_code _call_gen_code

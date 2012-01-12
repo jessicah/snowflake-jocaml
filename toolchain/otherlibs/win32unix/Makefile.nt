@@ -11,7 +11,16 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.nt 10442 2010-05-20 09:40:41Z xleroy $
+# $Id: Makefile.nt 10509 2010-06-04 19:17:18Z maranget $
+
+include ../../config/Makefile
+
+# Compilation options
+CC=$(BYTECC)
+CFLAGS=-I../../byterun -I../unix
+CAMLC=../../boot/ocamlrun ../../ocamlc -I ../../stdlib
+CAMLOPT=../../boot/ocamlrun ../../ocamlopt -I ../../stdlib
+COMPFLAGS=-warn-error A -g
 
 # Files in this directory
 WIN_FILES = accept.c bind.c channels.c close.c \
@@ -21,8 +30,7 @@ WIN_FILES = accept.c bind.c channels.c close.c \
   mkdir.c open.c pipe.c read.c rename.c \
   select.c sendrecv.c \
   shutdown.c sleep.c socket.c sockopt.c startup.c stat.c \
-  system.c unixsupport.c windir.c winwait.c write.c \
-  winlist.c winworker.c windbug.c
+  system.c unixsupport.c windir.c winwait.c write.c
 
 # Files from the ../unix directory
 UNIX_FILES = access.c addrofstr.c chdir.c chmod.c cst2constr.c \
@@ -31,11 +39,23 @@ UNIX_FILES = access.c addrofstr.c chdir.c chmod.c cst2constr.c \
   getserv.c gmtime.c putenv.c rmdir.c \
   socketaddr.c strofaddr.c time.c unlink.c utimes.c
 
+ALL_FILES=$(WIN_FILES) $(UNIX_FILES)
+
+DOBJS=$(ALL_FILES:.c=.$(DO))
+SOBJS=$(ALL_FILES:.c=.$(SO))
+
+LIBS=$(call SYSLIB,wsock32)
+
+CAML_OBJS=unix.cmo unixLabels.cmo
+CAMLOPT_OBJS=$(CAML_OBJS:.cmo=.cmx)
+
 UNIX_CAML_FILES = unix.mli unixLabels.mli unixLabels.ml
 
-ALL_FILES=$(WIN_FILES) $(UNIX_FILES)
-WSOCKLIB=$(call SYSLIB,ws2_32)
+all: dllunix.dll libunix.$(A) unix.cma
 
+<<<<<<< .courant
+allopt: libunix.$(A) unix.cmxa
+=======
 LIBNAME=unix
 COBJS=$(ALL_FILES:.c=.$(O))
 CAMLOBJS=unix.cmo unixLabels.cmo
@@ -44,18 +64,69 @@ LDOPTS=-ldopt $(WSOCKLIB)
 EXTRACAMLFLAGS=-nolabels
 EXTRACFLAGS=-I../unix
 HEADERS=unixsupport.h socketaddr.h
+>>>>>>> .fusion-droit.r10497
 
+dllunix.dll: $(DOBJS)
+	$(call MKDLL,dllunix.dll,tmp.$(A),$(DOBJS) ../../byterun/ocamlrun.$(A) $(LIBS))
+	rm tmp.*
 
-include ../Makefile.nt
+libunix.$(A): $(SOBJS)
+	$(call MKLIB,libunix.$(A),$(SOBJS))
 
-clean::
+$(DOBJS) $(SOBJS): unixsupport.h
+
+unix.cma: $(CAML_OBJS)
+	$(CAMLC) -a -linkall -o unix.cma $(CAML_OBJS) \
+          -dllib -lunix -cclib -lunix -cclib $(LIBS)
+
+unix.cmxa: $(CAMLOPT_OBJS)
+	$(CAMLOPT) -a -linkall -o unix.cmxa $(CAMLOPT_OBJS) \
+          -cclib -lunix -cclib $(LIBS)
+
+partialclean:
+	rm -f *.cm*
+
+clean: partialclean
+	rm -f *.$(A) *.dll *.$(O)
 	rm -f $(UNIX_FILES) $(UNIX_CAML_FILES)
+
+install:
+	cp dllunix.dll $(STUBLIBDIR)/dllunix.dll
+	cp libunix.$(A) $(LIBDIR)/libunix.$(A)
+	cp $(CAML_OBJS:.cmo=.cmi) unix.cma $(CAML_OBJS:.cmo=.mli) $(LIBDIR)
+	cp unixsupport.h $(LIBDIR)/caml
+
+installopt:
+	cp unix.cmxa $(CAML_OBJS:.cmo=.cmx) unix.$(A) $(LIBDIR)
+
+unixLabels.cmo: unixLabels.ml
+	$(CAMLC) -c $(COMPFLAGS) -nolabels unixLabels.ml
+
+unixLabels.cmx: unixLabels.ml
+	$(CAMLOPT) -c $(COMPFLAGS) -nolabels unixLabels.ml
 
 $(UNIX_FILES) $(UNIX_CAML_FILES): %: ../unix/%
 	cp ../unix/$* $*
 
-depend:
+.SUFFIXES: .ml .mli .cmo .cmi .cmx .$(DO) .$(SO)
 
-$(COBJS): unixsupport.h
+.mli.cmi:
+	$(CAMLC) -c $(COMPFLAGS) $<
+
+.ml.cmo:
+	$(CAMLC) -c $(COMPFLAGS) $<
+
+.ml.cmx:
+	$(CAMLOPT) -c $(COMPFLAGS) $<
+
+.c.$(DO):
+	$(BYTECC) $(DLLCCCOMPOPTS) $(CFLAGS) -c $<
+	mv $*.$(O) $*.$(DO)
+
+.c.$(SO):
+	$(BYTECC) $(BYTECCCOMPOPTS) $(CFLAGS) -c $<
+	mv $*.$(O) $*.$(SO)
+
+depend:
 
 include .depend

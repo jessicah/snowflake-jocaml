@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: signals_byt.c 7904 2007-02-23 09:29:45Z xleroy $ */
+/* $Id: signals_byt.c 8113 2007-03-23 09:01:11Z maranget $ */
 
 /* Signal handling, code specific to the bytecode interpreter */
 

@@ -12,16 +12,19 @@
 (*                                                                       *)
 (*************************************************************************)
 
-(* $Id: jg_menu.ml 7307 2006-01-04 16:55:50Z doligez $ *)
+(* $Id: jg_menu.ml 4255 2002-01-16 16:32:52Z peskine $ *)
 
 open Tk
 
-class c ~parent ?(underline=0) label = object (self)
-  val menu =
-    let menu =  Menu.create parent in
-    Menu.add_cascade parent ~menu ~label ~underline;
-    menu
-  method menu = menu
+class c ~parent ?underline:(n=0) text = object (self)
+  val pair =
+    let button =
+      Menubutton.create parent ~text ~underline:n in
+    let menu =  Menu.create button in
+    Menubutton.configure button ~menu;
+    button, menu
+  method button = fst pair
+  method menu = snd pair
   method virtual add_command :
       ?underline:int ->
       ?accelerator:string ->     ?activebackground:color ->
@@ -30,15 +33,10 @@ class c ~parent ?(underline=0) label = object (self)
       ?font:string ->            ?foreground:color ->
       ?image:image ->            ?state:state ->
       string -> unit
-  method add_command ?(underline=0) ?accelerator ?activebackground
+  method add_command ?underline:(n=0) ?accelerator ?activebackground
       ?activeforeground ?background ?bitmap ?command ?font ?foreground
       ?image ?state label =
-    Menu.add_command menu ~label ~underline ?accelerator
+    Menu.add_command (self#menu) ~label ~underline:n ?accelerator
       ?activebackground ?activeforeground ?background ?bitmap
       ?command ?font ?foreground ?image ?state
 end
-
-let menubar tl =
-  let menu = Menu.create tl ~name:"menubar" ~typ:`Menubar in
-  Toplevel.configure tl ~menu;
-  menu

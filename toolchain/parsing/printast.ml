@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: printast.ml 10263 2010-04-17 14:45:12Z garrigue $ *)
+(* $Id: printast.ml 10518 2010-06-04 19:19:28Z maranget $ *)
 
 open Asttypes;;
 open Format;;
@@ -41,6 +41,13 @@ let rec fmt_longident_aux f x =
 ;;
 
 let fmt_longident f x = fprintf f "\"%a\"" fmt_longident_aux x;;
+
+(*> JOCAML *)
+let fmt_joinident f x = fprintf f "\"%s\"" x
+and fmt_joinarg f = function
+  | None -> fprintf f "\"_\""
+  | Some x ->  fprintf f "\"%s\"" x;;
+(*< JOCAML *)
 
 let fmt_constant f x =
   match x with
@@ -116,6 +123,15 @@ let longident i ppf li = line i ppf "%a\n" fmt_longident li;;
 let string i ppf s = line i ppf "\"%s\"\n" s;;
 let bool i ppf x = line i ppf "%s\n" (string_of_bool x);;
 let label i ppf x = line i ppf "label=\"%s\"\n" x;;
+
+(*> JOCAML *)
+let joinident i ppf ji =
+  line i ppf "joinident %a\n" fmt_location ji.pjident_loc;
+  let i = i+1 in
+  line i ppf "%a\n" fmt_joinident ji.pjident_desc
+;;
+(*< JOCAML *)
+
 
 let rec core_type i ppf x =
   line i ppf "core_type %a\n" fmt_location x.ptyp_loc;
@@ -328,6 +344,44 @@ and expression i ppf x =
   | Pexp_open (m, e) ->
       line i ppf "Pexp_open \"%a\"\n" fmt_longident m;
       expression i ppf e
+(*> JOCAML *)
+  | Pexp_spawn (e) ->
+      line i ppf "Pexp_spawn\n" ;
+      expression i ppf e ;
+  | Pexp_par (e1, e2) ->
+      line i ppf "Pexp_par\n";
+      expression i ppf e1;
+      expression i ppf e2;
+  | Pexp_reply (e, id) ->
+      line i ppf "Pexp_reply\n";
+      expression i ppf e;
+      joinident i ppf id;
+  | Pexp_def (d,e) ->
+      line i ppf "Pexp_def\n";
+      joindefinition i ppf d;
+      expression i ppf e;
+
+and joindefinition i ppf d = list i joinautomaton ppf d
+
+and joinautomaton i ppf d =
+  line i ppf "joinautomaton %a\n" fmt_location d.pjauto_loc;
+  let i=i+1 in
+  list i joinclause ppf d.pjauto_desc;
+
+and joinclause i ppf cl =
+  line i ppf "joinclause %a\n" fmt_location cl.pjclause_loc;
+  let i=i+1 in
+  let (jpats, e) = cl.pjclause_desc in
+  list i joinpattern ppf jpats;
+  expression i ppf e;
+
+and joinpattern i ppf jpat =
+  line i ppf "joinpattern %a\n" fmt_location jpat.pjpat_loc;
+  let i = i+1 in
+  let chan,pat = jpat.pjpat_desc in
+  joinident i ppf chan ;
+  pattern i ppf pat
+(*< JOCAML *)
 
 and value_description i ppf x =
   line i ppf "value_description\n";
@@ -610,6 +664,13 @@ and structure_item i ppf x =
   | Pstr_value (rf, l) ->
       line i ppf "Pstr_value %a\n" fmt_rec_flag rf;
       list i pattern_x_expression_def ppf l;
+(*>JOCAML*)
+  | Pstr_def d ->
+      line i ppf "Pstr_def";
+      joindefinition i ppf d;
+  | Pstr_exn_global li ->
+      line i ppf "Pstr_exn_global %a\n"  fmt_longident li
+(*<JOCAML*)
   | Pstr_primitive (s, vd) ->
       line i ppf "Pstr_primitive \"%s\"\n" s;
       value_description i ppf vd;

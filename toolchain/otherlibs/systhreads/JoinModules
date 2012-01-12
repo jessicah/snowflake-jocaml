@@ -1,0 +1,6 @@
+# This file lists all accessible join modules. -*- Makefile -*-
+# It is used to know what to expunge in toplevels.
+# $Id: JoinModules 8741 2008-01-02 14:04:09Z maranget $
+
+THREAD_MODULES=thread mutex condition event
+JOIN_MODULES=unix $(THREAD_MODULES)

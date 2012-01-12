@@ -1,0 +1,5 @@
+# This file lists all accessible join 'standard' modules. -*- Makefile -*-
+# It is used to know what to expunge in toplevels.
+# $Id: StdJoinModules 10588 2010-06-17 16:37:18Z maranget $
+
+STDJOIN_MODULES=join joinCom joinProc joinTextProc joinFifo joinCount joinHelper joinPool joinMapRed

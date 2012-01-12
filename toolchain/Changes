@@ -420,7 +420,6 @@ Other libraries:
 - Unix: added getsockopt_error returning type Unix.error.
   Added support for TCP_NODELAY and IPV6_ONLY socket options.
 - Win32 Unix: "select" now supports all kinds of file descriptors.
-  Improved emulation of "lockf" (PR#4609).
 
 Tools:
 - ocamldebug now supported under Windows (MSVC and Mingw ports),
@@ -2721,4 +2720,4 @@ Caml Special Light 1.06:
 
 * First public release.
 
-$Id: Changes 11110 2011-07-04 21:15:01Z doligez $
+$Id: Changes 11113 2011-07-07 14:32:00Z maranget $

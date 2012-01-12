@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: protocol.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: protocol.mli 10509 2010-06-04 19:17:18Z maranget $ *)
 
 open Widget
 
@@ -73,15 +73,6 @@ val finalizeTk : unit -> unit
        called when you call [Pervasives.exit ()] *)
 
 val mainLoop : unit -> unit
-    (* Start the event loop *)
-
-type event_flag =
-  DONT_WAIT | X_EVENTS | FILE_EVENTS | TIMER_EVENTS | IDLE_EVENTS | ALL_EVENTS
-val do_one_event : event_flag list -> bool
-    (* Process a single event *)
-val do_pending : unit -> unit
-    (* Process all pending events, without waiting.
-       This lets you use Tk from the toplevel, for instance. *)
 
 
 (* Direct evaluation of tcl code *)

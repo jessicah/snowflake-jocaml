@@ -10,13 +10,13 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.shared 10718 2010-10-15 15:36:55Z doligez $
+# $Id: Makefile.shared 11113 2011-07-07 14:32:00Z maranget $
 
 include ../config/Makefile
 
 CAMLRUN=../boot/ocamlrun
-CAMLC=$(CAMLRUN) ../boot/ocamlc -strict-sequence -nostdlib -I ../boot
-CAMLOPT=$(CAMLRUN) ../ocamlopt -nostdlib -I ../stdlib
+CAMLC=$(CAMLRUN) ../boot/ocamlc -strict-sequence -nostdlib -I ../boot  $(NOJOIN)
+CAMLOPT=$(CAMLRUN) ../ocamlopt -nostdlib -I ../stdlib  $(NOJOIN)
 CAMLLEX=$(CAMLRUN) ../boot/ocamllex
 INCLUDES=-I ../utils -I ../parsing -I ../typing -I ../bytecomp -I ../asmcomp \
 	 -I ../driver
@@ -24,7 +24,6 @@ COMPFLAGS= -warn-error A $(INCLUDES)
 LINKFLAGS=$(INCLUDES)
 
 all: ocamldep ocamlprof ocamlcp ocamlmktop ocamlmklib dumpobj objinfo
-# scrapelabels addlabels
 
 .PHONY: all
 
@@ -52,9 +51,9 @@ clean::
 	rm -f ocamldep.opt
 
 install::
-	cp ocamldep $(BINDIR)/ocamldep$(EXE)
+	cp ocamldep $(BINDIR)/jocamldep$(EXE)
 	if test -f ocamldep.opt; \
-	  then cp ocamldep.opt $(BINDIR)/ocamldep.opt$(EXE); else :; fi
+	  then cp ocamldep.opt $(BINDIR)/jocamldep.opt$(EXE); else :; fi
 
 # The profiler
 
@@ -70,13 +69,12 @@ ocamlcp: ocamlcp.cmo
 	$(CAMLC) $(LINKFLAGS) -o ocamlcp warnings.cmo main_args.cmo ocamlcp.cmo
 
 install::
-	cp ocamlprof $(BINDIR)/ocamlprof$(EXE)
-	cp ocamlcp $(BINDIR)/ocamlcp$(EXE)
+	cp ocamlprof $(BINDIR)/jocamlprof$(EXE)
+	cp ocamlcp $(BINDIR)/jocamlcp$(EXE)
 	cp profiling.cmi profiling.cmo $(LIBDIR)
 
 clean::
 	rm -f ocamlprof ocamlcp
-
 
 # To help building mixed-mode libraries (Caml + C)
 
@@ -93,7 +91,7 @@ myocamlbuild_config.ml: ../config/Makefile ../build/mkmyocamlbuild_config.sh
 	cp ../myocamlbuild_config.ml .
 
 install::
-	cp ocamlmklib $(BINDIR)/ocamlmklib$(EXE)
+	cp ocamlmklib $(BINDIR)/jocamlmklib$(EXE)
 
 clean::
 	rm -f ocamlmklib
@@ -117,7 +115,7 @@ clean::
 # To make custom toplevels (see Makefile/Makefile.nt)
 
 install::
-	cp ocamlmktop $(BINDIR)/   # no $(EXE) here, ocamlmktop is a script
+	cp ocamlmktop $(BINDIR)/jocamlmktop  # no $(EXE) here, ocamlmktop is a script
 
 clean::
 	rm -f ocamlmktop

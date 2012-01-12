@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: minor_gc.h 8211 2007-05-04 14:05:13Z doligez $ */
+/* $Id: minor_gc.h 9081 2008-10-14 07:37:28Z maranget $ */
 
 #ifndef CAML_MINOR_GC_H
 #define CAML_MINOR_GC_H

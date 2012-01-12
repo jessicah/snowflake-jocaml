@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: header.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: header.c 10510 2010-06-04 19:17:45Z maranget $ */
 
 /* The launcher for bytecode executables (if #! is not working) */
 

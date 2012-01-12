@@ -14,17 +14,12 @@
 /*                                                                       */
 /*************************************************************************/
 
-/* $Id: camltk.h 10230 2010-04-03 06:43:51Z furuse $ */
+/* $Id: camltk.h 10509 2010-06-04 19:17:18Z maranget $ */
 
 #if defined(_WIN32) && defined(CAML_DLL) && defined(IN_CAMLTKSUPPORT)
 #define CAMLTKextern CAMLexport
 #else
 #define CAMLTKextern CAMLextern
-#endif
-
-/* compatibility with earlier versions of Tcl/Tk */
-#ifndef CONST84
-#define CONST84
 #endif
 
 /* if Tcl_GetStringResult is not defined, we use interp->result */
@@ -42,14 +37,14 @@ extern char * caml_string_to_tcl( value );
 
 /* cltkEval.c */
 CAMLTKextern Tcl_Interp *cltclinterp; /* The Tcl interpretor */
-extern value copy_string_list(int argc, char **argv);
+extern value copy_string_list(int argc, char ** argv);
 
 /* cltkCaml.c */
 /* pointers to Caml values */
 extern value *tkerror_exn;
 extern value *handler_code;
 extern int CamlCBCmd(ClientData clientdata, Tcl_Interp *interp,
-                     int argc, CONST84 char *argv[]);
+                     int argc, char *argv[]);
 CAMLTKextern void tk_error(char * errmsg) Noreturn;
 
 /* cltkMain.c */

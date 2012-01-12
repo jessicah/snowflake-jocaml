@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: topdirs.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: topdirs.ml 10515 2010-06-04 19:18:31Z maranget $ *)
 
 (* Toplevel directives *)
 
@@ -35,7 +35,7 @@ let _ = Hashtbl.add directive_table "quit" (Directive_none dir_quit)
 (* To add a directory to the load path *)
 
 let dir_directory s =
-  let d = expand_directory Config.standard_library s in
+  let d = expand_directory Config.standard_library Config.ocaml_library s in
   Config.load_path := d :: !Config.load_path;
   Dll.add_path [d]
 

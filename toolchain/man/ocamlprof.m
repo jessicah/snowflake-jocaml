@@ -1,4 +1,3 @@
-\" $Id: ocamlprof.m 10444 2010-05-20 14:06:29Z doligez $
 .TH OCAMLPROF 1
 
 .SH NAME
@@ -20,9 +19,9 @@ Objective Caml program instrumented with
 
 It produces a source listing of the program modules given as arguments
 where execution counts have been inserted as comments. For instance,
-
-.B ocamlprof foo.ml
-
+.P
+ocamlprof foo.ml
+.P
 prints the source code for the foo module, with comments indicating
 how many times the functions in this module have been called. Naturally,
 this information is accurate only if the source file has not been modified
@@ -31,20 +30,24 @@ since the profiling execution took place.
 .SH OPTIONS
 
 .TP
-.BI \-f \ dumpfile
+.BI \-f \ dumpfile 
 Specifies an alternate dump file of profiling information.
+The default is the file ocamlprof.dump in the current directory.
 .TP
 .BI \-F \ string
 Specifies an additional string to be output with profiling information.
 By default,
-.BR ocamlprof (1)
+.B ocamlprof
 will annotate programs with comments of the form
 .BI (* \ n \ *)
 where
 .I n
 is the counter value for a profiling point. With option
-.BI \-F \ s
+.BI \-F \ string
 the annotation will be
+<<<<<<< .courant
+.BI (* \ s\ n \ *)
+=======
 .BI (* \ sn \ *)
 .TP
 .BI \-impl \ filename
@@ -65,9 +68,10 @@ Print short version number and exit.
 .TP
 .BR \-help \ or \ \-\-help
 Display a short usage summary and exit.
+>>>>>>> .fusion-droit.r10497
 
 .SH SEE ALSO
 .BR ocamlcp (1).
 .br
-.IR "The Objective Caml user's manual" ,
+.I The Objective Caml user's manual,
 chapter "Profiling".

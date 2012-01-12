@@ -12,7 +12,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: tkthread.ml 8768 2008-01-11 16:13:18Z doligez $ *)
+(* $Id: tkthread.ml 7182 2005-10-27 08:09:17Z maranget $ *)
 
 let jobs : (unit -> unit) Queue.t = Queue.create ()
 let m = Mutex.create ()
@@ -20,18 +20,20 @@ let with_jobs f =
   Mutex.lock m; let y = f jobs in Mutex.unlock m; y
 
 let loop_id = ref None
+let reset () = loop_id := None
+let cannot_sync () =
+  match !loop_id with None -> true
+  | Some id -> Thread.id (Thread.self ()) = id
+
 let gui_safe () =
-  !loop_id = Some(Thread.id (Thread.self ()))
-let running () =
-  !loop_id <> None
+  not (Sys.os_type = "Win32") || !loop_id = Some(Thread.id (Thread.self ()))
 
 let has_jobs () = not (with_jobs Queue.is_empty)
 let n_jobs () = with_jobs Queue.length
 let do_next_job () = with_jobs Queue.take ()
 let async j x = with_jobs (Queue.add (fun () -> j x))
 let sync f x =
-  if !loop_id = None then failwith "Tkthread.sync";
-  if gui_safe () then f x else
+  if cannot_sync () then f x else
   let m = Mutex.create () in
   let res = ref None in
   Mutex.lock m;
@@ -50,9 +52,9 @@ let rec job_timer () =
 
 let thread_main () =
   try
-    loop_id := Some (Thread.id (Thread.self ()));
     ignore (Protocol.openTk());
     job_timer();
+    loop_id := Some (Thread.id (Thread.self ()));
     Protocol.mainLoop();
     loop_id := None;
   with exn ->
@@ -60,8 +62,6 @@ let thread_main () =
     raise exn
 
 let start () =
-  let th = Thread.create thread_main () in
-  loop_id := Some (Thread.id th);
-  th
+  Thread.create thread_main ()
 
 let top = Widget.default_toplevel

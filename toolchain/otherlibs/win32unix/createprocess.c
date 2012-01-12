@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: createprocess.c 9319 2009-07-20 11:51:50Z doligez $ */
+/* $Id: createprocess.c 4255 2002-01-16 16:32:52Z peskine $ */
 
 #include <windows.h>
 #include <mlvalues.h>
@@ -35,14 +35,15 @@ value win_create_process_native(value cmd, value cmdline, value env,
     envp = NULL;
   }
   /* Prepare stdin/stdout/stderr redirection */
-  ZeroMemory(&si, sizeof(STARTUPINFO));
-  si.cb = sizeof(STARTUPINFO);
-  si.dwFlags = STARTF_USESTDHANDLES;
+  GetStartupInfo(&si);
+  si.dwFlags |= STARTF_USESTDHANDLES;
   si.hStdInput = Handle_val(fd1);
   si.hStdOutput = Handle_val(fd2);
   si.hStdError = Handle_val(fd3);
   /* If we do not have a console window, then we must create one
      before running the process (keep it hidden for apparence).
+     Also one must suppress spurious flags in si.dwFlags.
+     Otherwise the redirections are ignored.
      If we are starting a GUI application, the newly created
      console should not matter. */
   if (win_has_console())
@@ -61,7 +62,7 @@ value win_create_process_native(value cmd, value cmdline, value env,
   CloseHandle(pi.hThread);
   /* Return the process handle as pseudo-PID
      (this is consistent with the wait() emulation in the MSVC C library */
-  return Val_long(pi.hProcess);
+  return Val_int(pi.hProcess);
 }
 
 CAMLprim value win_create_process(value * argv, int argn)

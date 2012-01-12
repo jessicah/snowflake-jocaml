@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: mips.s 6552 2004-07-13 12:19:15Z xleroy $ */
+/* $Id: mips.s 6857 2005-05-04 20:30:00Z habouzit $ */
 
 /* Asm part of the runtime system, Mips processor, IRIX n32 conventions */
 

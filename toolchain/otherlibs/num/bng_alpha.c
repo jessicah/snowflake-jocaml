@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: bng_alpha.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: bng_alpha.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 /* Code specific to the Alpha architecture. */
 

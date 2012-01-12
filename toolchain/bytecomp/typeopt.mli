@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: typeopt.mli 2873 2000-02-28 15:45:50Z xleroy $ *)
+(* $Id: typeopt.mli 7094 2005-09-30 15:08:57Z maranget $ *)
 
 (* Auxiliaries for type-based optimizations, e.g. array kinds *)
 
@@ -20,3 +20,4 @@ val array_kind : Typedtree.expression -> Lambda.array_kind
 val array_pattern_kind : Typedtree.pattern -> Lambda.array_kind
 val bigarray_kind_and_layout :
       Typedtree.expression -> Lambda.bigarray_kind * Lambda.bigarray_layout
+val is_unit_channel_type : Types.type_expr -> Env.t -> bool

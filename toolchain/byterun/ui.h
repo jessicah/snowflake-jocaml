@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: ui.h 6021 2003-12-15 18:10:51Z doligez $ */
+/* $Id: ui.h 7192 2005-10-27 09:14:16Z maranget $ */
 
 /* Function declarations for non-Unix user interfaces */
 

@@ -1,26 +1,20 @@
-/* $Id: winmain.c 9153 2008-12-03 18:09:09Z doligez $ */
+/* $Id: winmain.c 10509 2010-06-04 19:17:18Z maranget $ */
 
 #include <windows.h>
 #include <mlvalues.h>
 #include <callback.h>
 #include <sys.h>
 
-/*CAMLextern int __argc; */
-/* CAMLextern char **__argv; */
-/* CAMLextern void caml_expand_command_line(int * argcp, char *** argvp); */
-/* extern void caml_main (char **); */
+extern int __argc;
+extern char **__argv;
+extern void caml_expand_command_line(int * argcp, char *** argvp);
+extern void caml_main (char **);
 
 int WINAPI WinMain(HINSTANCE h, HINSTANCE HPrevInstance,
                    LPSTR lpCmdLine, int nCmdShow)
 {
-  char exe_name[1024];
-  char * argv[2];
-
-  GetModuleFileName(NULL, exe_name, sizeof(exe_name) - 1);
-  exe_name[sizeof(exe_name) - 1] = '0';
-  argv[0] = exe_name;
-  argv[1] = NULL;
-  caml_main(argv);
+  caml_expand_command_line(&__argc, &__argv);
+  caml_main(__argv);
   sys_exit(Val_int(0));
   return 0;
 }

@@ -4476,4 +4476,4 @@ let main () =
 
 if not !Sys.interactive then Printexc.catch main ();;
 
-(* $Id: sorts.ml 10713 2010-10-08 11:53:19Z doligez $ *)
+(* $Id: sorts.ml 11113 2011-07-07 14:32:00Z maranget $ *)

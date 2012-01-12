@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: parmatch.mli 8906 2008-07-09 13:03:38Z mauny $ *)
+(* $Id: parmatch.mli 9081 2008-10-14 07:37:28Z maranget $ *)
 
 (* Detection of partial matches and unused match cases. *)
 open Types
@@ -54,6 +54,15 @@ val pressure_variants: Env.t -> pattern list -> unit
 val check_partial: Location.t -> (pattern * expression) list -> partial
 val check_unused: Env.t -> (pattern * expression) list -> unit
 
+(*>JOCAML*)
+(* usefullness of all patterns in a list, as a list of booleans *)
+val useful: pattern list -> bool list
+
+(* replace all variables by wildcards (and rewrite p as x into  p) *)
+val remove_binders : pattern -> pattern
+(*<JOCAML*)
+
 (* Irrefutability tests *)
 val irrefutable : pattern -> bool
 val fluid : pattern -> bool
+

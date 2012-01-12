@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: emit_nt.mlp 10862 2010-11-27 17:19:24Z xleroy $ *)
+(* $Id: emit_nt.mlp 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Emission of x86-64 (AMD 64) assembly code, MASM syntax *)
 

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: unused_var.mli 7307 2006-01-04 16:55:50Z doligez $ *)
+(* $Id: unused_var.mli 8113 2007-03-23 09:01:11Z maranget $ *)
 
 val warn : Format.formatter -> Parsetree.structure -> Parsetree.structure;;
 (* Warn on unused variables; return the second argument. *)

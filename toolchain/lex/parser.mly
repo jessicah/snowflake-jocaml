@@ -10,7 +10,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: parser.mly 10271 2010-04-19 12:25:06Z maranget $ */
+/* $Id: parser.mly 10502 2010-06-04 19:15:07Z maranget $ */
 
 /* The grammar for lexer definitions */
 

@@ -14,7 +14,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: slave.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: slave.ml 10509 2010-06-04 19:17:18Z maranget $ *)
 
 (* The code run on initialisation, in addition to normal Tk code
  * NOTE: camltk has not fully been initialised yet

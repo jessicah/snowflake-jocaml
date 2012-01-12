@@ -11,7 +11,7 @@
 #                                                                       #
 #########################################################################
 
-# $Id: Makefile.common 10448 2010-05-21 11:28:21Z doligez $
+# $Id: Makefile.common 10505 2010-06-04 19:16:46Z maranget $
 
 include ../config/Makefile
 
@@ -45,7 +45,7 @@ ld.conf: ../config/Makefile
 	echo "$(LIBDIR)" >> ld.conf
 
 install::
-	cp ocamlrun$(EXE) $(BINDIR)/ocamlrun$(EXE)
+	cp ocamlrun$(EXE) $(BINDIR)/jocamlrun$(EXE)
 	cp libcamlrun.$(A) $(LIBDIR)/libcamlrun.$(A)
 	cd $(LIBDIR); $(RANLIB) libcamlrun.$(A)
 	if test -d $(LIBDIR)/caml; then : ; else mkdir $(LIBDIR)/caml; fi

@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: printexc.mli 10457 2010-05-21 18:30:12Z doligez $ *)
+(* $Id: printexc.mli 10510 2010-06-04 19:17:45Z maranget $ *)
 
 (** Facilities for printing exceptions. *)
 

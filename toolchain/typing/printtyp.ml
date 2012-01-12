@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: printtyp.ml 10703 2010-10-02 08:58:23Z garrigue $ *)
+(* $Id: printtyp.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Printing functions *)
 
@@ -163,9 +163,11 @@ and raw_type_desc ppf = function
           match row.row_name with None -> fprintf ppf "None"
           | Some(p,tl) ->
               fprintf ppf "Some(@,%a,@,%a)" path p raw_type_list tl)
+  | Tproc kids -> fprintf ppf "Tproc"
   | Tpackage (p, _, tl) ->
       fprintf ppf "@[<hov1>Tpackage(@,%a@,%a)@]" path p
         raw_type_list tl
+
 
 and raw_field ppf = function
     Rpresent None -> fprintf ppf "Rpresent None"
@@ -289,6 +291,7 @@ let rec mark_loops_rec visited ty =
         List.iter (fun t -> add_alias t) tyl;
         mark_loops_rec visited ty
     | Tunivar -> ()
+    | Tproc _ -> ()
 
 let mark_loops ty =
   normalize_type Env.empty ty;
@@ -396,6 +399,7 @@ let rec tree_of_typexp sch ty =
         end
     | Tunivar ->
         Otyp_var (false, name_of_type ty)
+    | Tproc _ -> Otyp_proc
     | Tpackage (p, n, tyl) ->
         Otyp_module (Path.name p, n, tree_of_typlist sch tyl)
   in

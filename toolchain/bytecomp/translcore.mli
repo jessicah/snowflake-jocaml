@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: translcore.mli 8232 2007-05-16 08:21:41Z doligez $ *)
+(* $Id: translcore.mli 9081 2008-10-14 07:37:28Z maranget $ *)
 
 (* Translation from typed abstract syntax to lambda terms,
    for the core language *)
@@ -27,6 +27,10 @@ val transl_apply: lambda -> (expression option * optional) list
                   -> Location.t -> lambda
 val transl_let:
       rec_flag -> (pattern * expression) list -> lambda -> lambda
+(*> JOCAML *)
+val transl_def: joinautomaton list -> lambda -> lambda
+val transl_loc: joinlocation list -> lambda -> lambda    
+(*< JOCAML *)
 val transl_primitive: Primitive.description -> lambda
 val transl_exception:
       Ident.t -> Path.t option -> exception_declaration -> lambda

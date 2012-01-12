@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: lambda.mli 10667 2010-09-02 13:29:21Z xclerc $ *)
+(* $Id: lambda.mli 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* The "lambda" intermediate code *)
 
@@ -203,3 +203,10 @@ val staticfail : lambda (* Anticipated static failure *)
 (* Check anticipated failure, substitute its final value *)
 val is_guarded: lambda -> bool
 val patch_guarded : lambda -> lambda -> lambda
+
+(*>JOCAML*)
+(* Get a runtime location, ie a tuple (filename, line, pos) *)
+val transl_location : Location.t -> lambda
+val may_raise : primitive -> bool
+(*<JOCAML*)
+

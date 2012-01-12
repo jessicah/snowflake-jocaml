@@ -10,7 +10,7 @@
 ;(*                                                                     *)
 ;(***********************************************************************)
 
-;(* $Id: camldebug.el 10661 2010-08-30 10:16:22Z doligez $ *)
+;(* $Id: camldebug.el 11113 2011-07-07 14:32:00Z maranget $ *)
 
 ;;; Run camldebug under Emacs
 ;;; Derived from gdb.el.

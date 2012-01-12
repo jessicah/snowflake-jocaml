@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: amd64.S 10862 2010-11-27 17:19:24Z xleroy $ */
+/* $Id: amd64.S 11113 2011-07-07 14:32:00Z maranget $ */
 
 /* Asm part of the runtime system, AMD64 processor */
 /* Must be preprocessed by cpp */

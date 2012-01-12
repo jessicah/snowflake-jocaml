@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: ident.mli 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: ident.mli 10508 2010-06-04 19:17:06Z maranget $ *)
 
 (* Identifiers (unique names) *)
 
@@ -57,3 +57,4 @@ val add: t -> 'a -> 'a tbl -> 'a tbl
 val find_same: t -> 'a tbl -> 'a
 val find_name: string -> 'a tbl -> 'a
 val keys: 'a tbl -> t list
+val map: ('a -> 'a) -> 'a tbl -> 'a tbl

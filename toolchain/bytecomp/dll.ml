@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: dll.ml 9547 2010-01-22 12:48:24Z doligez $ *)
+(* $Id: dll.ml 10506 2010-06-04 19:16:52Z maranget $ *)
 
 (* Handling of dynamically-linked libraries *)
 
@@ -111,10 +111,10 @@ let synchronize_primitive num symb =
 
 (* Read the [ld.conf] file and return the corresponding list of directories *)
 
-let ld_conf_contents () =
+let read_ld_conf_contents dir =
   let path = ref [] in
   begin try
-    let ic = open_in (Filename.concat Config.standard_library "ld.conf") in
+    let ic = open_in (Filename.concat dir "ld.conf") in
     begin try
       while true do
         path := input_line ic :: !path
@@ -125,6 +125,13 @@ let ld_conf_contents () =
   with Sys_error _ -> ()
   end;
   List.rev !path
+
+let ld_conf_contents () =
+  read_ld_conf_contents Config.standard_library @
+  begin match  Config.ocaml_library with
+  | None -> []
+  | Some dir -> read_ld_conf_contents dir
+  end
 
 (* Split the CAML_LD_LIBRARY_PATH environment variable and return
    the corresponding list of directories.  *)

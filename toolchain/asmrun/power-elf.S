@@ -11,7 +11,7 @@
 /*                                                                   */
 /*********************************************************************/
 
-/* $Id: power-elf.S 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: power-elf.S 10522 2010-06-04 19:20:20Z maranget $ */
 
 #define Addrglobal(reg,glob) \
         addis   reg, 0, glob@ha; \

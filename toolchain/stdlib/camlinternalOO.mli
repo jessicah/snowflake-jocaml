@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: camlinternalOO.mli 7372 2006-04-05 02:28:13Z garrigue $ *)
+(* $Id: camlinternalOO.mli 8113 2007-03-23 09:01:11Z maranget $ *)
 
 (** Run-time support for objects and classes.
     All functions in this module are for system use only, not for the

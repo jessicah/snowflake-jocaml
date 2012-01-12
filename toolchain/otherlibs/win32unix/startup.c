@@ -16,8 +16,6 @@
 #include <stdlib.h>
 #include <mlvalues.h>
 #include "unixsupport.h"
-#include "winworker.h"
-#include "windbug.h"
 
 value val_process_id;
 
@@ -34,17 +32,16 @@ CAMLprim value win_startup(unit)
                   DUPLICATE_SAME_ACCESS);
   val_process_id = Val_int(h);
 
-  worker_init();
-
   return Val_unit;
 }
 
 CAMLprim value win_cleanup(unit)
      value unit;
 {
-  worker_cleanup();
-
   (void) WSACleanup();
+<<<<<<< .courant
+=======
 
+>>>>>>> .fusion-droit.r10497
   return Val_unit;
 }

@@ -10,7 +10,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: bytelink.ml 10695 2010-09-29 16:46:54Z doligez $ *)
+(* $Id: bytelink.ml 11113 2011-07-07 14:32:00Z maranget $ *)
 
 (* Link a set of .cmo files and produce a bytecode executable. *)
 
@@ -491,6 +491,9 @@ let fix_exec_name name =
 (* Main entry point (build a custom runtime if needed) *)
 
 let link objfiles output_name =
+  let objfiles =
+    if !Clflags.nojoin then objfiles
+    else "unix.cma" :: "threads.cma" :: "join.cma" :: objfiles in
   let objfiles =
     if !Clflags.nopervasives then objfiles
     else if !Clflags.output_c_object then "stdlib.cma" :: objfiles

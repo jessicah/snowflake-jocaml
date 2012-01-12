@@ -11,7 +11,7 @@
 (*                                                                     *)
 (***********************************************************************)
 
-(* $Id: stdLabels.mli 6694 2004-11-25 00:06:06Z doligez $ *)
+(* $Id: stdLabels.mli 7198 2005-10-27 11:22:54Z maranget $ *)
 
 (** Standard labeled libraries.
 

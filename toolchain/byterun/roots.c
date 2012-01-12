@@ -11,7 +11,7 @@
 /*                                                                     */
 /***********************************************************************/
 
-/* $Id: roots.c 9547 2010-01-22 12:48:24Z doligez $ */
+/* $Id: roots.c 10505 2010-06-04 19:16:46Z maranget $ */
 
 /* To walk the memory roots for garbage collection */
 
