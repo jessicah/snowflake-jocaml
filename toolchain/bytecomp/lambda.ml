@@ -161,6 +161,7 @@ and lambda_event_kind =
   | Lev_after of Types.type_expr
   | Lev_function
 
+
 let const_unit = Const_pointer 0
 
 let lambda_unit = Lconst const_unit
@@ -422,3 +423,85 @@ and negate_comparison = function
 | Ceq -> Cneq| Cneq -> Ceq
 | Clt -> Cge | Cle -> Cgt
 | Cgt -> Cle | Cge -> Clt
+
+(*>JOCAML*)
+(* Get a runtime location, ie a tuple (filename, line, pos) *)
+(* Code moved from translcore, so as to share it *)
+
+let transl_location loc =
+  (* [Location.get_pos_info] is too expensive *)
+  let fname = match loc.Location.loc_start.Lexing.pos_fname with
+              | "" -> !Location.input_name
+              | x -> x
+  in
+  let pos = loc.Location.loc_start in
+  let line = pos.Lexing.pos_lnum in
+  let char = pos.Lexing.pos_cnum - pos.Lexing.pos_bol in
+  Lconst(Const_block(0,
+              [Const_base(Const_string fname);
+               Const_base(Const_int line);
+               Const_base(Const_int char)]))
+
+(*>JOCAML*)
+let may_raise = function
+  | Pccall desc -> desc.Primitive.prim_alloc
+  | Praise 
+  | Pstringrefs | Pstringsets
+  | Parrayrefs _
+  | Parraysets _
+  | Pdivint | Pmodint (* Hum, not really an exception... *)
+  | Pdivbint _
+  | Pmodbint _
+  | Pbigarrayref _
+  | Pbigarrayset _
+  | Plazyforce
+    -> true
+  | Pidentity
+  | Pignore
+  | Pgetglobal _
+  | Psetglobal _
+  | Pmakeblock (_,_)
+  | Pfield _
+  | Psetfield (_,_)
+  | Pfloatfield _
+  | Psetfloatfield _
+  | Pduprecord (_,_)
+  | Psequand | Psequor | Pnot
+  | Pnegint | Paddint | Psubint | Pmulint 
+  | Pandint | Porint | Pxorint
+  | Plslint | Plsrint | Pasrint
+  | Pintcomp _
+  | Poffsetint _
+  | Poffsetref _
+  | Pintoffloat | Pfloatofint
+  | Pnegfloat | Pabsfloat
+  | Paddfloat | Psubfloat | Pmulfloat | Pdivfloat
+  | Pfloatcomp _
+  | Pstringlength
+ (* since they are unsafe... assume they do not fail *)
+  | Pstringrefu | Pstringsetu
+  | Pmakearray _
+  | Parraylength _
+ (* since they are unsafe... assume they do not fail *)
+  | Parrayrefu _ | Parraysetu _
+  (* Interval tests *)
+  | Pisint | Pisout
+  (* Bitvect operations *)
+  | Pbittest
+  (* Operations on boxed integers (Nativeint.t, Int32.t, Int64.t) *)
+  | Pbintofint _
+  | Pintofbint _
+  | Pcvtbint _
+  | Pnegbint _
+  | Paddbint _
+  | Psubbint _
+  | Pmulbint _
+  | Pandbint _
+  | Porbint _
+  | Pxorbint _
+  | Plslbint _
+  | Plsrbint _
+  | Pasrbint _
+  | Pbintcomp _
+      -> false
+(*<JOCAML*)

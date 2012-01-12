@@ -29,6 +29,9 @@ val type_nativeint: type_expr
 val type_int32: type_expr
 val type_int64: type_expr
 val type_lazy_t: type_expr -> type_expr
+(*> JOCAML *)
+val type_process : kont_locs -> type_expr
+(*< JOCAML *)
 
 val path_int: Path.t
 val path_char: Path.t

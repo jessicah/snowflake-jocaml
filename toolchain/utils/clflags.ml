@@ -33,7 +33,10 @@ and classic = ref false                 (* -nolabels *)
 and nopervasives = ref false            (* -nopervasives *)
 and preprocessor = ref(None : string option) (* -pp *)
 let annotations = ref false             (* -annot *)
-and use_threads = ref false             (* -thread *)
+(*> JOCAML *)
+and nojoin = ref false                  (* -nojoin *)
+(*< JOCAML *)
+and use_threads = ref true (* JOCAML*)  (* -thread *)
 and use_vmthreads = ref false           (* -vmthread *)
 and noassert = ref false                (* -noassert *)
 and verbose = ref false                 (* -verbose *)
@@ -86,7 +89,10 @@ let std_include_flag prefix =
 ;;
 
 let std_include_dir () =
-  if !no_std_include then [] else [Config.standard_library]
+  if !no_std_include then []
+  else match Config.ocaml_library with
+  | None -> [Config.standard_library]
+  | Some s -> [Config.standard_library; s]    
 ;;
 
 let shared = ref false (* -shared *)

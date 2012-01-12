@@ -47,6 +47,9 @@ val lookup_module: Longident.t -> t -> Path.t * module_type
 val lookup_modtype: Longident.t -> t -> Path.t * modtype_declaration
 val lookup_class: Longident.t -> t -> Path.t * class_declaration
 val lookup_cltype: Longident.t -> t -> Path.t * cltype_declaration
+(*> JOCAML *)
+val lookup_continuation: Longident.t -> t -> Path.t * continuation_description
+(*< JOCAML *)
 
 (* Insertion by identifier *)
 
@@ -63,6 +66,13 @@ val add_cltype: Ident.t -> cltype_declaration -> t -> t
 
 val add_item: signature_item -> t -> t
 val add_signature: signature -> t -> t
+
+(*> JOCAML *)
+val add_continuation: Ident.t -> continuation_description -> t -> t
+val remove_continuations: t -> t
+(* Erase channel information *)
+val remove_channel_info: t -> t
+(*< JOCAML *)
 
 (* Insertion of all fields of a signature, relative to the given path.
    Used to implement open. *)

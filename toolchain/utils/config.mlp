@@ -25,6 +25,10 @@
 let version = Sys.ocaml_version
 
 let standard_library_default = "%%LIBDIR%%"
+let _ocaml_library = "%%OCAMLLIB%%"
+let ocaml_library = match _ocaml_library with
+| "" -> None
+| s  -> Some s
 
 let standard_library =
   try
@@ -62,7 +66,7 @@ let load_path = ref ([] : string list)
 
 let interface_suffix = ref ".mli"
 
-let max_tag = 245
+let max_tag = 244
 (* This is normally the same as in obj.ml, but we have to define it
    separately because it can differ when we're in the middle of a
    bootstrapping phase. *)

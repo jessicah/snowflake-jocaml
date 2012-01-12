@@ -53,6 +53,15 @@ val pressure_variants: Env.t -> pattern list -> unit
 val check_partial: Location.t -> (pattern * expression) list -> partial
 val check_unused: Env.t -> (pattern * expression) list -> unit
 
+(*>JOCAML*)
+(* usefullness of all patterns in a list, as a list of booleans *)
+val useful: pattern list -> bool list
+
+(* replace all variables by wildcards (and rewrite p as x into  p) *)
+val remove_binders : pattern -> pattern
+(*<JOCAML*)
+
 (* Irrefutability tests *)
 val irrefutable : pattern -> bool
 val fluid : pattern -> bool
+

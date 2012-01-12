@@ -95,7 +95,7 @@ module Charset =
 type re_syntax =
     Char of char
   | String of string
-  | CharClass of Charset.t * bool  (* true = complemented, false = normal *)
+  | CharClass of Charset.t
   | Seq of re_syntax list
   | Alt of re_syntax * re_syntax
   | Star of re_syntax
@@ -155,7 +155,7 @@ let displ dest from = dest - from - 1
 let rec is_nullable = function
     Char c -> false
   | String s -> s = ""
-  | CharClass(cl, cmpl) -> false
+  | CharClass cl -> false
   | Seq rl -> List.for_all is_nullable rl
   | Alt (r1, r2) -> is_nullable r1 || is_nullable r2
   | Star r -> true
@@ -174,7 +174,7 @@ let rec is_nullable = function
 let rec first = function
     Char c -> Charset.singleton c
   | String s -> if s = "" then Charset.full else Charset.singleton s.[0]
-  | CharClass(cl, cmpl) -> if cmpl then Charset.complement cl else cl
+  | CharClass cl -> cl
   | Seq rl -> first_seq rl
   | Alt (r1, r2) -> Charset.union (first r1) (first r2)
   | Star r -> Charset.full
@@ -196,13 +196,12 @@ and first_seq = function
 (* Transform a Char or CharClass regexp into a character class *)
 
 let charclass_of_regexp fold_case re =
-  let (cl1, compl) =
+  let cl =
     match re with
-    | Char c -> (Charset.singleton c, false)
-    | CharClass(cl, compl) -> (cl, compl)
+      Char c -> Charset.singleton c
+    | CharClass cl -> cl
     | _ -> assert false in
-  let cl2 = if fold_case then Charset.fold_case cl1 else cl1 in
-  if compl then Charset.complement cl2 else cl2
+  if fold_case then Charset.fold_case cl else cl
 
 (* The case fold table: maps characters to their lowercase equivalent *)
 
@@ -289,10 +288,9 @@ let compile fold_case re =
           else
             emit_instr op_STRING (cpool_index s)
       end
-  | CharClass(cl, compl) ->
-      let cl1 = if fold_case then Charset.fold_case cl else cl in
-      let cl2 = if compl then Charset.complement cl1 else cl1 in
-      emit_instr op_CHARCLASS (cpool_index cl2)
+  | CharClass cl ->
+      let cl' = if fold_case then Charset.fold_case cl else cl in
+      emit_instr op_CHARCLASS (cpool_index cl')
   | Seq rl ->
       emit_seq_code rl
   | Alt(r1, r2) ->
@@ -493,11 +491,10 @@ let parse s =
   and regexp3 i =
     match s.[i] with
       '\\' -> regexpbackslash (i+1)
-    | '['  -> let (c, compl, j) = regexpclass0 (i+1) in
-              (CharClass(c, compl), j)
+    | '['  -> let (c, j) = regexpclass0 (i+1) in (CharClass c, j)
     | '^'  -> (Bol, i+1)
     | '$'  -> (Eol, i+1)
-    | '.'  -> (CharClass(dotclass, false), i+1)
+    | '.'  -> (CharClass dotclass, i+1)
     | c    -> (Char c, i+1)
   and regexpbackslash i =
     if i >= len then (Char '\\', i) else
@@ -522,8 +519,8 @@ let parse s =
           (Char c, i + 1)
   and regexpclass0 i =
     if i < len && s.[i] = '^'
-    then let (c, j) = regexpclass1 (i+1) in (c, true, j)
-    else let (c, j) = regexpclass1 i in (c, false, j)
+    then let (c, j) = regexpclass1 (i+1) in (Charset.complement c, j)
+    else regexpclass1 i
   and regexpclass1 i =
     let c = Charset.make_empty() in
     let j = regexpclass2 c i i in
@@ -647,10 +644,22 @@ let substitute_first expr repl_fun text =
   with Not_found ->
     text
 
-let opt_search_forward re s pos =
-  try Some(search_forward re s pos) with Not_found -> None
-
 let global_substitute expr repl_fun text =
+<<<<<<< .courant
+  let rec replace start last_was_empty =
+    try
+      let startpos = if last_was_empty then start + 1 else start in
+      if startpos > String.length text then raise Not_found;
+      let pos = search_forward expr text startpos in
+      let end_pos = match_end() in
+      let repl_text = repl_fun text in
+      String.sub text start (pos-start) ::
+      repl_text ::
+      replace end_pos (end_pos = pos)
+    with Not_found ->
+      [string_after text start] in
+  String.concat "" (replace 0 false)
+=======
   let rec replace accu start last_was_empty =
     let startpos = if last_was_empty then start + 1 else start in
     if startpos > String.length text then
@@ -666,6 +675,7 @@ let global_substitute expr repl_fun text =
                   end_pos (end_pos = pos)
   in
     String.concat "" (List.rev (replace [] 0 false))
+>>>>>>> .fusion-droit.r10497
 
 let global_replace expr repl text =
   global_substitute expr (replace_matched repl) text
@@ -674,6 +684,13 @@ and replace_first expr repl text =
 
 (** Splitting *)
 
+<<<<<<< .courant
+let search_forward_progress expr text start =
+  let pos = search_forward expr text start in
+  if match_end() = start && start < String.length text
+  then search_forward expr text (start + 1)
+  else pos
+=======
 let opt_search_forward_progress expr text start =
   match opt_search_forward expr text start with
   | None -> None
@@ -683,57 +700,54 @@ let opt_search_forward_progress expr text start =
       else if start < String.length text then
         opt_search_forward expr text (start + 1)
       else None
+>>>>>>> .fusion-droit.r10497
 
 let bounded_split expr text num =
   let start =
     if string_match expr text 0 then match_end() else 0 in
-  let rec split accu start n =
-    if start >= String.length text then accu else
-    if n = 1 then string_after text start :: accu else
-      match opt_search_forward_progress expr text start with
-      | None ->
-          string_after text start :: accu
-      | Some pos ->
-          split (String.sub text start (pos-start) :: accu)
-                (match_end()) (n-1)
-  in
-    List.rev (split [] start num)
+  let rec split start n =
+    if start >= String.length text then [] else
+    if n = 1 then [string_after text start] else
+      try
+        let pos = search_forward_progress expr text start in
+        String.sub text start (pos-start) :: split (match_end()) (n-1)
+      with Not_found ->
+        [string_after text start] in
+  split start num
 
 let split expr text = bounded_split expr text 0
 
 let bounded_split_delim expr text num =
-  let rec split accu start n =
-    if start > String.length text then accu else
-    if n = 1 then string_after text start :: accu else
-      match opt_search_forward_progress expr text start with
-      | None ->
-          string_after text start :: accu
-      | Some pos ->
-          split (String.sub text start (pos-start) :: accu)
-                (match_end()) (n-1)
-  in
-    if text = "" then [] else List.rev (split [] 0 num)
+  let rec split start n =
+    if start > String.length text then [] else
+    if n = 1 then [string_after text start] else
+      try
+        let pos = search_forward_progress expr text start in
+        String.sub text start (pos-start) :: split (match_end()) (n-1)
+      with Not_found ->
+        [string_after text start] in
+  if text = "" then [] else split 0 num
 
 let split_delim expr text = bounded_split_delim expr text 0
 
 type split_result = Text of string | Delim of string
 
 let bounded_full_split expr text num =
-  let rec split accu start n =
-    if start >= String.length text then accu else
-    if n = 1 then Text(string_after text start) :: accu else
-      match opt_search_forward_progress expr text start with
-      | None ->
-          Text(string_after text start) :: accu
-      | Some pos ->
-          let s = matched_string text in
-          if pos > start then
-            split (Delim(s) :: Text(String.sub text start (pos-start)) :: accu)
-                  (match_end()) (n-1)
-          else
-            split (Delim(s) :: accu)
-                  (match_end()) (n-1)
-  in
-    List.rev (split [] 0 num)
+  let rec split start n =
+    if start >= String.length text then [] else
+    if n = 1 then [Text(string_after text start)] else
+      try
+        let pos = search_forward_progress expr text start in
+        let s = matched_string text in
+        if pos > start then
+          Text(String.sub text start (pos-start)) ::
+          Delim(s) ::
+          split (match_end()) (n-1)
+        else
+          Delim(s) ::
+          split (match_end()) (n-1)
+      with Not_found ->
+        [Text(string_after text start)] in
+  split 0 num
 
 let full_split expr text = bounded_full_split expr text 0

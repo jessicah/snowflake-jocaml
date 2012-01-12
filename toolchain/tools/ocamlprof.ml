@@ -276,6 +276,12 @@ and rw_exp iflag sexp =
 
   | Pexp_assert (cond) -> rewrite_exp iflag cond
   | Pexp_assertfalse -> ()
+(*> JOCAML *)
+  |Pexp_def (_, _)|Pexp_reply (_, _)|Pexp_par (_, _)
+  |Pexp_spawn _
+    ->
+      assert false (* No profiling in jocaml *)
+(*< JOCAML *)
 
   | Pexp_lazy (expr) -> rewrite_exp iflag expr
 

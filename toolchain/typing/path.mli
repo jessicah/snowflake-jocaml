@@ -25,4 +25,6 @@ val binding_time: t -> int
 val nopos: int
 
 val name: t -> string
+    (* Return the print name, e.g., "F(X).M.foo" *)
+
 val head: t -> Ident.t

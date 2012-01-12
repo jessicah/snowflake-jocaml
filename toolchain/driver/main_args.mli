@@ -35,6 +35,7 @@ module type Bytecomp_options =
     val _no_app_funct : unit -> unit
     val _noassert : unit -> unit
     val _noautolink : unit -> unit
+    val _nojoin : unit -> unit
     val _nolabels : unit -> unit
     val _nostdlib : unit -> unit
     val _o : string -> unit
@@ -118,6 +119,7 @@ module type Optcomp_options = sig
   val _noassert : unit -> unit
   val _noautolink : unit -> unit
   val _nodynlink : unit -> unit
+  val _nojoin : unit -> unit
   val _nolabels : unit -> unit
   val _nostdlib : unit -> unit
   val _o : string -> unit

@@ -127,3 +127,17 @@ let bigarray_kind_and_layout exp =
        bigarray_decode_type exp.exp_env layout_type layout_table Pbigarray_unknown_layout)
   | _ ->
       (Pbigarray_unknown, Pbigarray_unknown_layout)
+
+let is_unit_channel_type ty env =
+  let channel_ty =Ctype.repr (Ctype.expand_head_opt env ty) in
+  match channel_ty.desc with
+  |  Tconstr(p, [msg_ty], _)
+    (* when Path.same p Predef.path_channel *) ->
+      let msg_ty = Ctype.repr (Ctype.expand_head_opt env msg_ty) in
+      begin match msg_ty.desc with
+      | Tconstr (p,[],_) when  Path.same p Predef.path_unit -> true
+      | _ -> false
+      end
+  | _ ->
+      (* This can happen with synchronous channels *)
+      false

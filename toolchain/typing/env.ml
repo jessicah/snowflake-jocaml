@@ -52,6 +52,9 @@ type t = {
   components: (Path.t * module_components) Ident.tbl;
   classes: (Path.t * class_declaration) Ident.tbl;
   cltypes: (Path.t * cltype_declaration) Ident.tbl;
+(*> JOCAML *)
+  continuations : (Path.t * continuation_description) Ident.tbl;
+(*< JOCAML *)
   summary: summary
 }
 
@@ -89,6 +92,7 @@ let empty = {
   modules = Ident.empty; modtypes = Ident.empty;
   components = Ident.empty; classes = Ident.empty;
   cltypes = Ident.empty;
+  continuations = Ident.empty;
   summary = Env_empty }
 
 let diff_keys is_local tbl1 tbl2 =
@@ -434,6 +438,12 @@ and lookup_class =
   lookup (fun env -> env.classes) (fun sc -> sc.comp_classes)
 and lookup_cltype =
   lookup (fun env -> env.cltypes) (fun sc -> sc.comp_cltypes)
+(*> JOCAML *)
+and lookup_continuation lid env = match lid with
+| Lident name -> Ident.find_name name env.continuations
+| _           -> raise Not_found
+(*< JOCAML *)  
+
 
 (* Expand manifest module type names at the top of the given module type *)
 
@@ -712,6 +722,23 @@ and add_class id ty env =
 
 and add_cltype id ty env =
   store_cltype id (Pident id) ty env
+
+(*> JOCAML *)
+and add_continuation id desc env  =
+  let cont_id = Ident.create (Ident.name id) in
+  let new_conts = 
+    Ident.add cont_id (Pident cont_id, desc) env.continuations in
+  {env with continuations = new_conts}
+
+and remove_continuations t =  {t with continuations = Ident.empty}
+
+let do_purge (path,d as c) = match d.val_kind with
+  | Val_channel _|Val_alone _ -> path,{ d with val_kind = Val_reg; }
+  | _ -> c
+
+let remove_channel_info t =
+  { t with values = Ident.map do_purge t.values ; }
+(*< JOCAML *)
 
 (* Insertion of bindings by name *)
 

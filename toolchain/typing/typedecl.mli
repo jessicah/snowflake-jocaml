@@ -25,6 +25,11 @@ val transl_exception:
 val transl_exn_rebind:
     Env.t -> Location.t -> Longident.t -> Path.t * exception_declaration
 
+(*>JOCAML*)
+val transl_exn_global:
+        Env.t -> Location.t -> Longident.t -> Path.t
+(*<JOCAML*)
+
 val transl_value_decl:
     Env.t -> Parsetree.value_description -> value_description
 

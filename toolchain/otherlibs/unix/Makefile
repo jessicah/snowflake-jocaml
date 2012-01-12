@@ -16,7 +16,7 @@
 
 LIBNAME=unix
 
-EXTRACAMLFLAGS=-nolabels
+EXTRACAMLFLAGS=-nolabels -nojoin
 
 COBJS=accept.o access.o addrofstr.o alarm.o bind.o chdir.o chmod.o \
   chown.o chroot.o close.o closedir.o connect.o cst2constr.o cstringv.o \

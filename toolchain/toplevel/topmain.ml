@@ -13,7 +13,7 @@
 
 open Clflags
 
-let usage = "Usage: ocaml <options> <object-files> [script-file]\noptions are:"
+let usage = "Usage: jocaml <options> <object-files> [script-file]\noptions are:"
 
 let preload_objects = ref []
 
@@ -45,9 +45,16 @@ let file_argument name =
     end
 
 let print_version () =
-  Printf.printf "The Objective Caml toplevel, version %s\n" Sys.ocaml_version;
+  Printf.printf "The JoCaml toplevel, version %s\n" Sys.ocaml_version;
   exit 0;
 ;;
+
+(*> JOCAML *)
+let magic_join () =
+  let dir = Misc.expand_directory Config.standard_library None "+threads" in
+  include_dirs := dir :: !include_dirs ;
+  ()
+(*< JOCAML *)         
 
 let print_version_num () =
   Printf.printf "%s\n" Sys.ocaml_version;
@@ -59,7 +66,8 @@ module Options = Main_args.Make_bytetop_options (struct
   let clear r () = r := false
 
   let _I dir =
-    let dir = Misc.expand_directory Config.standard_library dir in
+    let dir = Misc.expand_directory Config.standard_library
+        Config.ocaml_library dir in
     include_dirs := dir :: !include_dirs
   let _init s = init_file := Some s
   let _labels = clear classic
@@ -87,6 +95,7 @@ end);;
 
 
 let main () =
+  magic_join () ;
   Arg.parse Options.list file_argument usage;
   if not (prepare Format.err_formatter) then exit 2;
   Toploop.loop Format.std_formatter

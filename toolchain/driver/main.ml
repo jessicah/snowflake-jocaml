@@ -60,10 +60,16 @@ let process_file ppf name =
     raise(Arg.Bad("don't know what to do with " ^ name))
 
 let print_version_and_library () =
-  print_string "The Objective Caml compiler, version ";
+  print_string "The JoCaml compiler, version ";
   print_string Config.version; print_newline();
   print_string "Standard library directory: ";
   print_string Config.standard_library; print_newline();
+  begin match Config.ocaml_library with
+  | None -> ()
+  | Some d ->
+      print_string "Companion OCaml library directory: ";
+       print_string d; print_newline()
+  end ;
   exit 0
 
 let print_version_string () =
@@ -72,7 +78,7 @@ let print_version_string () =
 let print_standard_library () =
   print_string Config.standard_library; print_newline(); exit 0
 
-let usage = "Usage: ocamlc <options> <files>\nOptions are:"
+let usage = "Usage: jocamlc <options> <files>\nOptions are:"
 
 (* Error messages to standard error formatter *)
 let anonymous = process_file Format.err_formatter;;
@@ -119,8 +125,12 @@ module Options = Main_args.Make_bytecomp_options (struct
   let _principal = set principal
   let _rectypes = set recursive_types
   let _strict_sequence = set strict_sequence
-  let _thread = set use_threads
-  let _vmthread = set use_vmthreads
+(*>JOCAML*)
+  let _thread () =  set use_vmthreads () ; set use_threads ()
+  let _vmthread () = set use_vmthreads () ; unset use_threads ()
+  let _nojoin () =
+    set nojoin () ;  unset use_vmthreads () ;  unset use_threads ()
+(*<JOCAML*)
   let _unsafe = set fast
   let _use_prims s = use_prims := s
   let _use_runtime s = use_runtime := s

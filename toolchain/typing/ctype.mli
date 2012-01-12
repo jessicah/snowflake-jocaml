@@ -96,6 +96,8 @@ val generalize_structure: type_expr -> unit
         (* Same, but variables are only lowered to !current_level *)
 val generalize_spine: type_expr -> unit
         (* Special function to generalize a method during inference *)
+val make_nongen: type_expr -> unit
+        (* Make non-generalizable the given type *)
 val correct_levels: type_expr -> type_expr
         (* Returns a copy with decreasing levels *)
 val limited_generalize: type_expr -> type_expr -> unit
@@ -146,6 +148,10 @@ val unify_var: Env.t -> type_expr -> type_expr -> unit
            is a variable. *)
 val filter_arrow: Env.t -> type_expr -> label -> type_expr * type_expr
         (* A special case of unification (with l:'a -> 'b). *)
+val make_channel : Env.t -> type_expr -> type_expr
+        (* Build 't channel type *)
+val filter_channel: Env.t -> type_expr -> type_expr
+        (* A special case of unification (with 'a channel). *)
 val filter_method: Env.t -> string -> private_flag -> type_expr -> type_expr
         (* A special case of unification (with {m : 'a; 'b}). *)
 val check_filter_method: Env.t -> string -> private_flag -> type_expr -> unit

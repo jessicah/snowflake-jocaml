@@ -78,6 +78,65 @@ and expression_desc =
   | Texp_lazy of expression
   | Texp_object of class_structure * class_signature * string list
   | Texp_pack of module_expr
+(*> JOCAML *)
+  | Texp_asyncsend of expression * expression
+  | Texp_spawn of expression (* insert processes in expressions *)
+  | Texp_par of expression * expression
+  | Texp_null
+  | Texp_reply of expression * Ident.t
+  | Texp_def of joinautomaton list * expression
+  | Texp_loc of joinlocation list * expression
+
+
+and joinlocation =
+    {jloc_desc : joinident * joinautomaton list * expression ;
+    jloc_loc : Location.t}
+
+and 'a joinautomaton_gen =
+    {jauto_desc : 'a ;
+      jauto_name : Ident.t * Ident.t; (* auto name, wrapped auto name *)
+      jauto_names : (Ident.t * joinchannel) list ;
+      jauto_original : Ident.t list ;
+      jauto_nchans : int;
+     (* names defined, description*)
+      jauto_loc : Location.t}
+      
+and joinautomaton =
+ (joindispatcher list * joinreaction list * joinforwarder list)
+      joinautomaton_gen
+
+and joindispatcher =
+  Disp of
+    Ident.t * joinchannel  * (pattern * joinchannel) list * partial
+
+and joinclause = 
+   Ident.t * joinpattern list * joinpattern list list * 
+  (Ident.t * pattern) list * expression
+
+and joinreaction = Reac of joinclause
+
+and joinforwarder = Fwd of joinclause
+
+and joinchannel =
+    {jchannel_sync : bool ;
+     jchannel_id   : jchannel_id ;
+     jchannel_ident : Ident.t ;
+     jchannel_type : type_expr;
+     jchannel_env : Env.t;}
+
+and jchannel_id = Chan of Ident.t * int | Alone of Ident.t
+
+and joinpattern =
+    { jpat_desc: joinident * pattern ;  (* as given in source *)
+      jpat_kont : Ident.t option ref ;  (* For synchronous channels, can be shared by several patterns *)
+      jpat_loc: Location.t}
+
+and joinident =
+    { jident_desc : Ident.t ;
+      jident_loc  : Location.t;
+      jident_type : type_expr;
+      jident_env : Env.t;}
+(*< JOCAML *)
 
 and meth =
     Tmeth_name of string
@@ -148,6 +207,11 @@ and structure_item =
       (Ident.t * int * string list * class_expr * virtual_flag) list
   | Tstr_cltype of (Ident.t * cltype_declaration) list
   | Tstr_include of module_expr * Ident.t list
+(*> JOCAML *)
+  | Tstr_def of joinautomaton list
+  | Tstr_loc of joinlocation list
+  | Tstr_exn_global of Location.t * Path.t
+(*< JOCAML *)
 
 and module_coercion =
     Tcoerce_none
@@ -162,6 +226,12 @@ val map_pattern_desc : (pattern -> pattern) -> pattern_desc -> pattern_desc
 
 val let_bound_idents: (pattern * expression) list -> Ident.t list
 val rev_let_bound_idents: (pattern * expression) list -> Ident.t list
+(*> JOCAML *)
+val def_bound_idents: joinautomaton list -> Ident.t list
+val loc_bound_idents: joinlocation list -> Ident.t list
+val rev_def_bound_idents: joinautomaton list -> Ident.t list
+val rev_loc_bound_idents: joinlocation list -> Ident.t list
+(*< JOCAML *)
 
 (* Alpha conversion of patterns *)
 val alpha_pat : (Ident.t * Ident.t) list -> pattern -> pattern

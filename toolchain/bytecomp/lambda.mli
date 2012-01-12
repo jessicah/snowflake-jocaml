@@ -202,3 +202,10 @@ val staticfail : lambda (* Anticipated static failure *)
 (* Check anticipated failure, substitute its final value *)
 val is_guarded: lambda -> bool
 val patch_guarded : lambda -> lambda -> lambda
+
+(*>JOCAML*)
+(* Get a runtime location, ie a tuple (filename, line, pos) *)
+val transl_location : Location.t -> lambda
+val may_raise : primitive -> bool
+(*<JOCAML*)
+

@@ -1,3 +1,4 @@
+
 #########################################################################
 #                                                                       #
 #                            Objective Caml                             #
@@ -15,9 +16,11 @@
 
 include config/Makefile
 include stdlib/StdlibModules
+include otherlibs/systhreads/JoinModules
+include otherlibs/join/StdJoinModules
 
-CAMLC=boot/ocamlrun boot/ocamlc -nostdlib -I boot
-CAMLOPT=boot/ocamlrun ./ocamlopt -nostdlib -I stdlib -I otherlibs/dynlink
+CAMLC=boot/ocamlrun boot/ocamlc -nostdlib -I boot  $(NOJOIN)
+CAMLOPT=boot/ocamlrun ./ocamlopt -nostdlib -I stdlib -I otherlibs/dynlink $(NOJOIN)
 COMPFLAGS=-strict-sequence -warn-error A $(INCLUDES)
 LINKFLAGS=
 
@@ -25,7 +28,7 @@ CAMLYACC=boot/ocamlyacc
 YACCFLAGS=-v
 CAMLLEX=boot/ocamlrun boot/ocamllex
 CAMLDEP=boot/ocamlrun tools/ocamldep
-DEPFLAGS=$(INCLUDES)
+DEPFLAGS=$(NOJOIN) $(INCLUDES)
 CAMLRUN=byterun/ocamlrun
 SHELL=/bin/sh
 MKDIR=mkdir -p
@@ -35,7 +38,7 @@ INCLUDES=-I utils -I parsing -I typing -I bytecomp -I asmcomp -I driver \
 
 UTILS=utils/misc.cmo utils/tbl.cmo utils/config.cmo \
   utils/clflags.cmo utils/terminfo.cmo utils/ccomp.cmo utils/warnings.cmo \
-  utils/consistbl.cmo
+  utils/consistbl.cmo utils/extarray.cmo utils/agraph.cmo
 
 OPTUTILS=$(UTILS)
 
@@ -52,12 +55,14 @@ TYPING=typing/unused_var.cmo typing/ident.cmo typing/path.cmo \
   typing/printtyp.cmo typing/includeclass.cmo \
   typing/mtype.cmo typing/includecore.cmo \
   typing/includemod.cmo typing/parmatch.cmo \
+  typing/typejoin.cmo typing/joinmatching.cmo \
   typing/typetexp.cmo typing/stypes.cmo typing/typecore.cmo \
   typing/typedecl.cmo typing/typeclass.cmo \
   typing/typemod.cmo
 
 COMP=bytecomp/lambda.cmo bytecomp/printlambda.cmo \
   bytecomp/typeopt.cmo bytecomp/switch.cmo bytecomp/matching.cmo \
+  bytecomp/transljoin.cmo \
   bytecomp/translobj.cmo bytecomp/translcore.cmo \
   bytecomp/translclass.cmo bytecomp/translmod.cmo \
   bytecomp/simplif.cmo bytecomp/runtimedef.cmo
@@ -99,7 +104,10 @@ COMPOBJS=$(UTILS) $(PARSING) $(TYPING) $(COMP) $(BYTECOMP) $(DRIVER)
 
 TOPLIB=$(UTILS) $(PARSING) $(TYPING) $(COMP) $(BYTECOMP) $(TOPLEVEL)
 
-TOPOBJS=$(TOPLEVELLIB) $(TOPLEVELSTART)
+TOPOBJS=$(TOPLEVELLIB)\
+ otherlibs/unix/unix.cma otherlibs/systhreads/threads.cma\
+ otherlibs/join/join.cma\
+ $(TOPLEVELSTART)
 
 NATTOPOBJS=$(OPTUTILS) $(PARSING) $(TYPING) $(COMP) $(ASMCOMP) \
   driver/pparse.cmo driver/opterrors.cmo driver/optcompile.cmo \
@@ -115,7 +123,7 @@ EXPUNGEOBJS=utils/misc.cmo utils/tbl.cmo \
   typing/predef.cmo bytecomp/runtimedef.cmo bytecomp/bytesections.cmo \
   bytecomp/dll.cmo bytecomp/meta.cmo bytecomp/symtable.cmo toplevel/expunge.cmo
 
-PERVASIVES=$(STDLIB_MODULES) outcometree topdirs toploop
+PERVASIVES=$(STDLIB_MODULES) $(JOIN_MODULES) $(STDJOIN_MODULES) join_prim outcometree topdirs toploop
 
 # For users who don't read the INSTALL file
 defaultentry:
@@ -127,9 +135,10 @@ defaultentry:
 	@echo "	make install"
 	@echo "should work.  But see the file INSTALL for more details."
 
+# enough for developping jocaml (et c'est deja pas mal)
+center:runtime ocamlc ocamllex ocamlyacc ocamltools library ocaml otherlibraries
 # Recompile the system using the bootstrap compiler
-all: runtime ocamlc ocamllex ocamlyacc ocamltools library ocaml \
-  otherlibraries ocamlbuild.byte camlp4out $(DEBUGGER) ocamldoc
+all: center camlp4out $(DEBUGGER) ocamldoc
 
 # Compile everything the first time
 world:
@@ -189,7 +198,7 @@ coldstart:
 	cp byterun/ocamlrun$(EXE) boot/ocamlrun$(EXE)
 	cd yacc; $(MAKE) all
 	cp yacc/ocamlyacc$(EXE) boot/ocamlyacc$(EXE)
-	cd stdlib; $(MAKE) COMPILER=../boot/ocamlc all
+	cd stdlib; $(MAKE) COMPILER="../boot/ocamlc" all
 	cd stdlib; cp $(LIBFILES) ../boot
 	if test -f boot/libcamlrun.a; then :; else \
 	  ln -s ../byterun/libcamlrun.a boot/libcamlrun.a; fi
@@ -248,23 +257,16 @@ cleanboot:
 	rm -rf boot/Saved/Saved.prev/*
 
 # Compile the native-code compiler
-opt-core:
-	$(MAKE) runtimeopt
-	$(MAKE) ocamlopt
-	$(MAKE) libraryopt
 
-opt:
-	$(MAKE) runtimeopt
-	$(MAKE) ocamlopt
-	$(MAKE) libraryopt
-	$(MAKE) otherlibrariesopt
-	$(MAKE) ocamlbuildlib.native
+opt-core:runtimeopt ocamlopt libraryopt
+opt-center:opt-core otherlibrariesopt
+opt: runtimeopt ocamlopt libraryopt otherlibrariesopt
 
 # Native-code versions of the tools
 opt.opt: checkstack runtime core ocaml opt-core ocamlc.opt otherlibraries \
-	 ocamlbuild.byte camlp4out $(DEBUGGER) ocamldoc ocamlopt.opt \
+	 camlp4out $(DEBUGGER) ocamldoc ocamlopt.opt \
 	 otherlibrariesopt \
-	 ocamllex.opt ocamltoolsopt.opt ocamlbuild.native camlp4opt ocamldoc.opt
+	 ocamllex.opt ocamltoolsopt.opt camlp4opt ocamldoc.opt
 
 base.opt: checkstack runtime core ocaml opt-core ocamlc.opt otherlibraries \
 	 ocamlbuild.byte camlp4out $(DEBUGGER) ocamldoc ocamlopt.opt \
@@ -275,17 +277,17 @@ install:
 	if test -d $(BINDIR); then : ; else $(MKDIR) $(BINDIR); fi
 	if test -d $(LIBDIR); then : ; else $(MKDIR) $(LIBDIR); fi
 	if test -d $(STUBLIBDIR); then : ; else $(MKDIR) $(STUBLIBDIR); fi
-	if test -d $(MANDIR)/man$(MANEXT); then : ; \
-	  else $(MKDIR) $(MANDIR)/man$(MANEXT); fi
+#	if test -d $(MANDIR)/man$(MANEXT); then : ; \
+#	  else $(MKDIR) $(MANDIR)/man$(MANEXT); fi
 	cd $(LIBDIR); rm -f dllbigarray.so dlllabltk.so dllnums.so \
 	  dllthreads.so dllunix.so dllgraphics.so dllmldbm.so dllstr.so \
 	  dlltkanim.so
 	cd byterun; $(MAKE) install
-	cp ocamlc $(BINDIR)/ocamlc$(EXE)
-	cp ocaml $(BINDIR)/ocaml$(EXE)
+	cp ocamlc $(BINDIR)/jocamlc$(EXE)
+	cp ocaml $(BINDIR)/jocaml$(EXE)
 	cd stdlib; $(MAKE) install
-	cp lex/ocamllex $(BINDIR)/ocamllex$(EXE)
-	cp yacc/ocamlyacc$(EXE) $(BINDIR)/ocamlyacc$(EXE)
+	cp lex/ocamllex $(BINDIR)/jocamllex$(EXE)
+	cp yacc/ocamlyacc$(EXE) $(BINDIR)/jocamlyacc$(EXE)
 	cp toplevel/toplevellib.cma $(LIBDIR)/toplevellib.cma
 	cp expunge $(LIBDIR)/expunge$(EXE)
 	cp typing/outcometree.cmi typing/outcometree.mli $(LIBDIR)
@@ -293,32 +295,33 @@ install:
 	cp toplevel/toploop.cmi toplevel/topdirs.cmi toplevel/topmain.cmi \
 	   $(LIBDIR)
 	cd tools; $(MAKE) install
-	-cd man; $(MAKE) install
+#	-$(MAKE) -C man install
 	for i in $(OTHERLIBRARIES); do \
 	  (cd otherlibs/$$i; $(MAKE) install) || exit $$?; \
 	done
-	cd ocamldoc; $(MAKE) install
+#	- cd ocamldoc; $(MAKE) install
 	if test -f ocamlopt; then $(MAKE) installopt; else :; fi
-	if test -f debugger/ocamldebug; then (cd debugger; $(MAKE) install); \
-	   else :; fi
+#	- cd camlp4; $(MAKE) install BINDIR=$(BINDIR) LIBDIR=$(LIBDIR) MANDIR=$(MANDIR)
+#	if test -f debugger/ocamldebug; then (cd debugger; $(MAKE) install); \
+#	   else :; fi
 	cp config/Makefile $(LIBDIR)/Makefile.config
-	BINDIR=$(BINDIR) LIBDIR=$(LIBDIR) PREFIX=$(PREFIX) \
-	  ./build/partial-install.sh
+#	BINDIR=$(BINDIR) LIBDIR=$(LIBDIR) PREFIX=$(PREFIX) ./build/partial-install.sh
+
 
 # Installation of the native-code compiler
 installopt:
 	cd asmrun; $(MAKE) install
-	cp ocamlopt $(BINDIR)/ocamlopt$(EXE)
+	cp ocamlopt $(BINDIR)/jocamlopt$(EXE)
 	cd stdlib; $(MAKE) installopt
-	cd ocamldoc; $(MAKE) installopt
+#	cd ocamldoc; $(MAKE) installopt
 	for i in $(OTHERLIBRARIES); \
 	  do (cd otherlibs/$$i; $(MAKE) installopt) || exit $$?; done
 	if test -f ocamlc.opt; \
-	  then cp ocamlc.opt $(BINDIR)/ocamlc.opt$(EXE); else :; fi
+	  then cp ocamlc.opt $(BINDIR)/jocamlc.opt$(EXE); else :; fi
 	if test -f ocamlopt.opt; \
-	  then cp ocamlopt.opt $(BINDIR)/ocamlopt.opt$(EXE); else :; fi
+	  then cp ocamlopt.opt $(BINDIR)/jocamlopt.opt$(EXE); else :; fi
 	if test -f lex/ocamllex.opt; \
-	  then cp lex/ocamllex.opt $(BINDIR)/ocamllex.opt$(EXE); else :; fi
+	  then cp lex/ocamllex.opt $(BINDIR)/jocamllex.opt$(EXE); else :; fi
 
 clean:: partialclean
 
@@ -346,9 +349,23 @@ partialclean::
 
 # The toplevel
 
-ocaml: $(TOPOBJS) expunge
-	$(CAMLC) $(LINKFLAGS) -linkall -o ocaml.tmp $(TOPOBJS)
-	- $(CAMLRUN) ./expunge ocaml.tmp ocaml $(PERVASIVES)
+toplibs:
+	for i in unix systhreads threads ; do \
+          (cd otherlibs/$$i; $(MAKE) RUNTIME=$(RUNTIME) all) || exit $$?; \
+        done
+	(cd otherlibs/join; $(MAKE) join.cma) || exit $$?
+
+toplibsopt:
+	for i in  unix systhreads threads ; do \
+          (cd otherlibs/$$i; $(MAKE) allopt) || exit $$?; \
+        done
+	(cd otherlibs/join; $(MAKE) join.cmxa) || exit $$?
+
+
+ocaml: toplibs $(TOPOBJS) expunge
+	$(CAMLC) $(LINKFLAGS) -thread -I otherlibs/unix -I otherlibs/systhreads -I otherlibs/join \
+		-linkall -o ocaml.tmp $(TOPOBJS)
+	$(CAMLRUN) ./expunge ocaml.tmp ocaml $(PERVASIVES)
 	rm -f ocaml.tmp
 
 toplevel/toplevellib.cma: $(TOPLIB)
@@ -373,28 +390,29 @@ otherlibs/dynlink/dynlink.cmxa: otherlibs/dynlink/natdynlink.ml
 utils/config.ml: utils/config.mlp config/Makefile
 	@rm -f utils/config.ml
 	sed -e 's|%%LIBDIR%%|$(LIBDIR)|' \
-	    -e 's|%%BYTERUN%%|$(BINDIR)/ocamlrun|' \
-	    -e 's|%%CCOMPTYPE%%|cc|' \
-	    -e 's|%%BYTECC%%|$(BYTECC) $(BYTECCCOMPOPTS) $(SHAREDCCCOMPOPTS)|' \
-	    -e 's|%%NATIVECC%%|$(NATIVECC) $(NATIVECCCOMPOPTS)|' \
-	    -e 's|%%PACKLD%%|$(PACKLD)|' \
-	    -e 's|%%BYTECCLIBS%%|$(BYTECCLIBS)|' \
-	    -e 's|%%NATIVECCLIBS%%|$(NATIVECCLIBS)|' \
-	    -e 's|%%RANLIBCMD%%|$(RANLIBCMD)|' \
-	    -e 's|%%CC_PROFILE%%|$(CC_PROFILE)|' \
-	    -e 's|%%ARCH%%|$(ARCH)|' \
-	    -e 's|%%MODEL%%|$(MODEL)|' \
-	    -e 's|%%SYSTEM%%|$(SYSTEM)|' \
-	    -e 's|%%EXT_OBJ%%|.o|' \
-	    -e 's|%%EXT_ASM%%|.s|' \
-	    -e 's|%%EXT_LIB%%|.a|' \
-	    -e 's|%%EXT_DLL%%|.so|' \
-	    -e 's|%%SYSTHREAD_SUPPORT%%|$(SYSTHREAD_SUPPORT)|' \
-	    -e 's|%%ASM%%|$(ASM)|' \
-	    -e 's|%%MKDLL%%|$(MKDLL)|' \
-	    -e 's|%%MKEXE%%|$(MKEXE)|' \
-	    -e 's|%%MKMAINDLL%%|$(MKMAINDLL)|' \
-	    utils/config.mlp > utils/config.ml
+            -e 's|%%OCAMLLIB%%|$(OCAMLLIB)|' \
+            -e 's|%%BYTERUN%%|$(BINDIR)/jocamlrun|' \
+            -e 's|%%CCOMPTYPE%%|cc|' \
+            -e 's|%%BYTECC%%|$(BYTECC) $(BYTECCCOMPOPTS) $(SHAREDCCCOMPOPTS)|' \
+            -e 's|%%NATIVECC%%|$(NATIVECC) $(NATIVECCCOMPOPTS)|' \
+            -e 's|%%PACKLD%%|$(PACKLD)|' \
+            -e 's|%%BYTECCLIBS%%|$(BYTECCLIBS)|' \
+            -e 's|%%NATIVECCLIBS%%|$(NATIVECCLIBS)|' \
+            -e 's|%%RANLIBCMD%%|$(RANLIBCMD)|' \
+            -e 's|%%CC_PROFILE%%|$(CC_PROFILE)|' \
+            -e 's|%%ARCH%%|$(ARCH)|' \
+            -e 's|%%MODEL%%|$(MODEL)|' \
+            -e 's|%%SYSTEM%%|$(SYSTEM)|' \
+            -e 's|%%EXT_OBJ%%|.o|' \
+            -e 's|%%EXT_ASM%%|.s|' \
+            -e 's|%%EXT_LIB%%|.a|' \
+            -e 's|%%EXT_DLL%%|.so|' \
+            -e 's|%%SYSTHREAD_SUPPORT%%|$(SYSTHREAD_SUPPORT)|' \
+            -e 's|%%ASM%%|$(ASM)|' \
+            -e 's|%%MKDLL%%|$(MKDLL)|' \
+            -e 's|%%MKEXE%%|$(MKEXE)|' \
+            -e 's|%%MKMAINDLL%%|$(MKMAINDLL)|' \
+            utils/config.mlp > utils/config.ml
 	@chmod -w utils/config.ml
 
 partialclean::
@@ -544,7 +562,7 @@ beforedepend:: asmcomp/emit.ml
 
 tools/cvt_emit: tools/cvt_emit.mll
 	cd tools; \
-	$(MAKE) CAMLC="../$(CAMLRUN) ../boot/ocamlc -I ../stdlib" cvt_emit
+	$(MAKE) CAMLC="../$(CAMLRUN) ../boot/ocamlc $(NOJOIN) -I ../stdlib" cvt_emit
 
 # The "expunge" utility
 
@@ -637,17 +655,17 @@ alldepend::
 
 # OCamldoc
 
-ocamldoc: ocamlc ocamlyacc ocamllex otherlibraries
-	cd ocamldoc && $(MAKE) all
-
-ocamldoc.opt: ocamlc.opt ocamlyacc ocamllex
-	cd ocamldoc && $(MAKE) opt.opt
-
-partialclean::
-	cd ocamldoc && $(MAKE) clean
-
-alldepend::
-	cd ocamldoc && $(MAKE) depend
+#ocamldoc: ocamlc ocamlyacc ocamllex otherlibraries
+#	cd ocamldoc && $(MAKE) all
+#
+#ocamldoc.opt: ocamlc.opt ocamlyacc ocamllex
+#	cd ocamldoc && $(MAKE) opt.opt
+#
+#partialclean::
+#	cd ocamldoc && $(MAKE) clean
+#
+#alldepend::
+#	cd ocamldoc && $(MAKE) depend
 
 # The extra libraries
 
@@ -674,38 +692,21 @@ alldepend::
 
 # The replay debugger
 
-ocamldebugger: ocamlc ocamlyacc ocamllex otherlibraries
-	cd debugger; $(MAKE) all
+ocamldebugger:
+# ocamlc ocamlyacc ocamllex otherlibraries
+#	cd debugger; $(MAKE) all
+#
+#partialclean::
+#	cd debugger; $(MAKE) clean
+#
+#alldepend::
+#	cd debugger; $(MAKE) depend
 
-partialclean::
-	cd debugger; $(MAKE) clean
-
-alldepend::
-	cd debugger; $(MAKE) depend
 
 # Camlp4
 
-camlp4out: ocamlc otherlibraries ocamlbuild-mixed-boot ocamlbuild.byte
-	./build/camlp4-byte-only.sh
-
-camlp4opt: ocamlopt otherlibrariesopt ocamlbuild-mixed-boot ocamlbuild.native
-	./build/camlp4-native-only.sh
-
-# Ocamlbuild
-
-ocamlbuild.byte: ocamlc otherlibraries ocamlbuild-mixed-boot
-	./build/ocamlbuild-byte-only.sh
-
-ocamlbuild.native: ocamlopt otherlibrariesopt ocamlbuild-mixed-boot
-	./build/ocamlbuild-native-only.sh
-ocamlbuildlib.native: ocamlopt otherlibrariesopt ocamlbuild-mixed-boot
-	./build/ocamlbuildlib-native-only.sh
-
-ocamlbuild-mixed-boot: ocamlc otherlibraries
-	./build/mixed-boot.sh
-
-partialclean::
-	rm -rf _build
+camlp4out camlp4opt camlp4optopt:
+camlp4opt:
 
 # Check that the stack limit is reasonable.
 
